@@ -322,7 +322,7 @@ probTable<-function(){
 
 # Topic III
 menuListT3<-c(
-  'Probability Table & Graph (No Percentage Format %)',
+  'Probability Table & Graph (No Percentage Format %) & Expected Val ...etc',
   'Back'
 );
 
@@ -330,7 +330,7 @@ menuListT3<-c(
 topicIII<-function(){
   choice<-menu(menuListT3,title='What do you need?')
   switch (choice,
-          '1' = {discreteProbDistro();discreteProbDistro()},
+          '1' = {discreteProbDistro();topicIII()},
           '2' = topicSelect(),
   )
 }
@@ -390,7 +390,7 @@ topicIV<-function(){
   choice<-menu(menuListT4,title='What do you need?')
   switch (choice,
           '1' = {normalDist();topicIV()},
-          '2' = {normalDistCal();topicIV()},
+          '2' = {normalDistCal(FALSE);topicIV()},
           '3' = {uniformDistCal();topicIV()},
           '4' = {standardizeDistCal();topicIV()},
           '5' = topicSelect(),
@@ -405,28 +405,53 @@ normalDist<-function(){
   print(p)
 }
 
-normalDistCal<-function(){
-  type<-readline(prompt='P[X ≤ x] (default) or P[X > x] (>) or val2<x<val1 (bt) or prob->val (p): ')
+normalDistCal<-function(sampling){
+  if(identical(sampling,TRUE)){
+    cli_alert_warning('The stdev of the sample and the stdev of the population is differet')
+    cli_alert_warning('However, the average will be the same')
+  }
+    type<-readline(prompt='P[X ≤ x] (default) or P[X > x] (>) or val2<x<val1 (bt) or prob->val (p): ')
+
   if(identical(type,'>')){
-    info<-toInt(inpSplit('Enter (Value,Mean,Stdev) in CSV: '))
+    if(identical(sampling,TRUE)){
+      info<-toInt(inpSplit('Enter (Value,Expected Value,Stderr) in CSV: '))
+    }else{
+      info<-toInt(inpSplit('Enter (Value,Mean,Stdev) in CSV: '))
+    }
     p<-pnorm(info[1],info[2],info[3],lower.tail = FALSE)
+    print('The Probability is: ')
     print(p)
     cat('\n')
   }else if(identical(type,'')){
-    info<-toInt(inpSplit('Enter (Value,Mean,Stdev) in CSV: '))
+    if(identical(sampling,TRUE)){
+      info<-toInt(inpSplit('Enter (Value,Expected Value,Stderr) in CSV: '))
+    }else{
+      info<-toInt(inpSplit('Enter (Value,Mean,Stdev) in CSV: '))
+    }
     p<-pnorm(info[1],info[2],info[3])
+    print('The Probability is: ')
     print(p)
     cat('\n')
   }else if(identical(type,'p')){
-    info<-toInt(inpSplit('Enter (Prbability,Mean,Stdev) in CSV: '))
+    if(identical(sampling,TRUE)){
+      info<-toInt(inpSplit('Enter (Prbability,Expected Value,Stderr) in CSV: '))
+    }else{
+      info<-toInt(inpSplit('Enter (Prbability,Mean,Stdev) in CSV: '))
+    }
     val<-qnorm(info[1],info[2],info[3])
+    print('The Value is: ')
     print(val)
     cat('\n')
   }else{
-    info<-toInt(inpSplit('Enter (Smaller Value, Larger Value,Mean,Stdev) in CSV: '))
+    if(identical(sampling,TRUE)){
+      info<-toInt(inpSplit('Enter (Smaller Value, Larger Value,Expected Value,Stderr) in CSV: '))
+    }else{
+      info<-toInt(inpSplit('Enter (Smaller Value, Larger Value,Mean,Stdev) in CSV: '))
+    }
     p1<-pnorm(info[1],info[3],info[4])
     p2<-pnorm(info[2],info[3],info[4])
     p3<-p2-p1
+    print('The Probability is: ')
     print(p3)
     cat('\n')
  }
@@ -437,16 +462,19 @@ uniformDistCal<-function(){
   if(identical(type,'>')){
     info<-toInt(inpSplit('Enter (Value,Min,Max) in CSV: '))
     p<-punif(info[1],info[2],info[3],lower.tail = FALSE)
+    print('The Probability is: ')
     print(p)
     cat('\n')
   }else if(identical(type,'')){
     info<-toInt(inpSplit('Enter (Value,Min,Max) in CSV: '))
     p<-punif(info[1],info[2],info[3])
+    print('The Probability is: ')
     print(p)
     cat('\n')
   }else if(identical(type,'p')){
     info<-toInt(inpSplit('Enter (Prbability,Min,Max) in CSV: '))
     val<-qunif(info[1],info[2],info[3])
+    print('The Value is: ')
     print(val)
     cat('\n')
   }else{
@@ -454,6 +482,7 @@ uniformDistCal<-function(){
     p1<-punif(info[1],info[3],info[4])
     p2<-punif(info[2],info[3],info[4])
     p3<-p2-p1
+    print('The Probability is: ')
     print(p3)
     cat('\n')
   }
@@ -465,16 +494,19 @@ standardizeDistCal<-function(){
   if(identical(type,'>')){
     info<-toInt(readline(prompt='Enter the Value: '))
     p<-pnorm(info,lower.tail = FALSE)
+    print('The Probability is: ')
     print(p)
     cat('\n')
   }else if(identical(type,'')){
     info<-toInt(readline(prompt='Enter the Value: '))
     p<-pnorm(info)
+    print('The Probability is: ')
     print(p)
     cat('\n')
   }else if(identical(type,'p')){
     info<-toInt(readline(prompt='Enter the Probability: '))
     val<-qnorm(info)
+    print('The Value is: ')
     print(val)
     cat('\n')
   }else{
@@ -482,6 +514,7 @@ standardizeDistCal<-function(){
     p1<-pnorm(info[1])
     p2<-pnorm(info[2])
     p3<-p2-p1
+    print('The Probability is: ')
     print(p3)
     cat('\n')
   }
@@ -489,32 +522,115 @@ standardizeDistCal<-function(){
 
 # Topic V
 menuListT5<-c(
-  'Sampling Distribution Calculation',
-  'Normal Distribution Calculation',
-  'Uniform Distribution Calculation',
-  'Standardized Distribution Calculation',
+  'Standard Error Calculation (Numerical)',
+  'Standard Error Calculation (Categorical)',
+  'Sampling Distribution Calculation (Numerical)',
+  'Sampling Proportion Calculation (Categorical)',
   'Back'
 );
 
 # Main Menu Selection Function
 topicV<-function(){
+  cli_alert_info('Central Limit Theorem (CLT): ')
+  cli_alert_info('Sample Size > 30, the Sample = Normally Distributed')
+  cat('\n')
   choice<-menu(menuListT5,title='What do you need?')
   switch (choice,
-          '1' = {standardErr();topicV()},
-          '2' = {normalDistCal();topicV()},
-          '3' = {uniformDistCal();topicV()},
-          '4' = {standardizeDistCal();topicV()},
+          '1' = {standardErrNumeric();topicV()},
+          '2' = {standardErrCategorical();topicV()},
+          '3' = {normalDistCal(TRUE);topicV()},
+          '4' = {normalDistCal(TRUE);topicV()},
           '5' = topicSelect(),
   )
 }
 
-standardErr<-function(){
+standardErrNumeric<-function(){
   popStdev<-toInt(readline(prompt='Enter the Population Stdev: '))
   popSize<-toInt(readline(prompt='Enter the Population Size: '))
-  print(paste('Stadard Error is',popStdev/sqrt(popSize)))
+  print(paste('Standard Error is',popStdev/sqrt(popSize)))
   cat('\n')
 }
 
+
+standardErrCategorical<-function(){
+  cli_alert_info('Sampling Proportion: ')
+  cli_alert_info('Sample Size > 30 & Each Category >5')
+  cli_alert_info('The Sample = Normally Distributed')
+  expVal<-toInt(readline(prompt='Enter the Expected Value: '))
+  size<-toInt(readline(prompt='Enter the Sample Size: '))
+  print(paste('Standard Error (Categorical) is',sqrt(expVal*(1-expVal)/size) ))
+  cat('\n')
+}
+
+# Topic VI
+menuListT6<-c(
+  'Confidence Interval Known Sigma Normal Distribution',
+  'Standard Error Calculation (Categorical)',
+  'Sampling Distribution Calculation (Numerical)',
+  'Sampling Proportion Calculation (Categorical)',
+  'Back'
+);
+
+# Main Menu Selection Function
+topicVI<-function(){
+  choice<-menu(menuListT6,title='What do you need?')
+  switch (choice,
+          '1' = {confIntSigKnown();topicVI()},
+          '2' = {confIntSigUnKnown();topicVI()},
+          '3' = {normalDistCal(TRUE);topicVI()},
+          '4' = {normalDistCal(TRUE);topicVI()},
+          '5' = topicSelect(),
+  )
+}
+
+# Confidence Level with Known Sigma (stdev/sigma giving)
+confIntSigKnown<-function(){
+  filex<-file.choose()
+  # Fix newline problem
+  cat("\n", file = filex, append = TRUE)
+  x<-read.csv(file=filex,header = TRUE)
+  df<-data.frame(x)
+  # Calculate the sample size and the average | get the sigma
+  sig<-toInt(readline(prompt='Enter the Sigma (Given Stdev): '))
+  sampleSize<-length(df[,1])
+  avg<-mean(df[,1])
+  # The confidence level
+  cl<-toInt(readline(prompt='Enter the Confidence Level (usually 95%): '))
+  sl<-1-cl
+  # The z value (margin of error)
+  z<-qnorm(cl+sl/2)
+  # The standard error
+  stderr<-sig/sqrt(sampleSize)
+  # Error margin
+  em<-stderr*z
+  # Precision
+  pres<-em/avg
+  # Lower Limit
+  ll<-avg-em
+  # Upper Limit
+  ul<-avg+em
+  #The result
+  cat('\n')
+  cli_alert_success('The Results:')
+  cat('\n')
+  result<-c(paste('Sigma:',sig),paste('Sample Size:',sampleSize)
+                 ,paste('Avg:',avg),paste('Confidence Level:',cl)
+                 ,paste('Significance Level:',sl),paste('Z-value:',z),
+                 paste('Standard Error:',stderr),paste('Error Margin:',em),
+                 paste('Precision:',pres),paste('Lower Limit:',ll),
+                 paste('Upper Limit:',ul))
+  print(result)
+  cat('\n')
+  # Warning abt analysis
+  cli_alert_warning('The analysis should at least include the point of estimate (avg),')
+  cli_alert_warning('the margin of error, the confidence level, or the lower&upper limit')
+  cat('\n')
+}
+
+# Confidence Level with Unknown Sigma (using stdev from the sample)
+confIntSigUnKnown<-function(){
+
+}
 # Misc.:
 
 # Split input func
@@ -560,7 +676,8 @@ topicSelect=function(){
             '2' = topicII(),
             '3' = topicIII(),
             '4' = topicIV(),
-            '5' = topicV()
+            '5' = topicV(),
+            '6' = topicVI()
     )
   };
   mSelect(choice);
