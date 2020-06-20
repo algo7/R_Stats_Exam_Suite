@@ -8,6 +8,7 @@ library(cli);
 library(utils);
 library(stats);
 library(openintro);
+library(ggfortify);
 
 
 #import the data from the file browser
@@ -207,7 +208,7 @@ probTable<-function(){
   rownames(df)<-df[,1]
   df[-c(1),-c(1)]
   df<-df[,-1]
-  
+
   # Vertical Sum
   verticalTotal<-integer()
   for (coln in colnames(df)) {
@@ -250,7 +251,7 @@ probTable<-function(){
     y<-per[,i]
     filter<-c(filter,as.double(x)==as.double(y))
   }
- 
+
   roo<-length(rownames(per))
   coo<-length(colnames(per))-1
   eventTable<-matrix(filter,nrow=roo,ncol =coo)
@@ -260,15 +261,83 @@ probTable<-function(){
   print(eventTable)
 }
 
-treeG<-function(){
-  treeDiag(c("Breakfast?", "Go to class"), 
-           c(0.4, 0.11, 0.49), 
-           list(c(0.4, 0.36,0.24), 
-                c(0.6, 0.3, 0.1), 
-                c(0.1, 0.4, 0.5)), 
-           c("one", "two", "three"), 
-           c("Statistics","English", "Sociology"))
+# Topic III
+menuListT3<-c(
+  'Probability Table & Graph (No Percentage Format %)',
+  'Back'
+);
+
+# Main Menu Selection Function
+topicIII<-function(){
+  choice<-menu(menuListT3,title='What do you need?')
+  switch (choice,
+          '1' = discreteProbDistro(),
+          '2' = topicSelect(),
+  )
 }
+
+discreteProbDistro<-function(){
+  # Import the file
+  filex<-file.choose()
+  # Fix newline problem
+  cat("\n", file = filex, append = TRUE)
+  x<-read.csv(file=filex,header = TRUE)
+  df<-data.frame(x)
+  # Get the total
+  total<-sum(df[,2])
+  # Calculate the percentage table
+  df<-cbind(df,data.frame('per.'=df[,2]/total))
+  print(df)
+  cat('\n')
+  # Expected val.
+  print('Expected Value: ')
+  expV<-crossprod(df[,1],df[,length(colnames(df))])[1]
+  print(expV)
+  cat('\n')
+  # Variance
+  print('Variance: ')
+  variance<-sum(((df[,1]-expV)^2)*df[,length(colnames(df))])
+  print(variance)
+  cat('\n')
+  # Stdev
+  print('Standard Deviation: ')
+  print(sqrt(variance))
+
+  # Plot
+  x=df[,1]
+  y=df[,2]
+  # Determine the breaks
+  hist<-hist(unlist(df),breaks = 'Sturges',plot=FALSE)$breaks
+  interval<-hist[length(hist)]-hist[length(hist)-1]
+  xmax<-interval+hist[length(hist)]
+  ymax<-max(df[length(colnames(df))])*2
+  # The plot object
+  plot(x,y,ylab='Probability',main=colnames(df)[1],type='h',col='blue',xlim = c(0,xmax),ylim=c(0,ymax))+
+  points(x,y,pch=16,cex=1,col="dark red")+text(x,y,labels=y,pos=3)
+
+}
+
+# Topic IV
+menuListT4<-c(
+  'Normal Distribution',
+  'Back'
+);
+
+# Main Menu Selection Function
+topicIV<-function(){
+  choice<-menu(menuListT4,title='What do you need?')
+  switch (choice,
+          '1' = normalDist(),
+          '2' = topicSelect(),
+  )
+}
+
+normalDist<-function(){
+  stdev<-readline(prompt='Enter the standard deviation: ')
+  mean<-readline(prompt='Enter the mean: ')
+  ggdistribution(dnorm,seq(100,3000,by=10),mean=850,sd=150)
+}
+
 
 
 
@@ -308,18 +377,19 @@ topicSelect=function(){
     'Multiple Linear Regression',
     'Chi2 Test'
   );
-  
+
   choice<-menu(menuList, title='Please Select A Topic:');
   # Menu Selection Function
   mSelect<-function(topic){
     switch (topic,
             '1' = topicI(),
             '2' = topicII(),
-            '3' = topicIII()
+            '3' = topicIII(),
+            '4' = topicIV()
     )
   };
   mSelect(choice);
-  
+
 }
 topicSelect()
 
