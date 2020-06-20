@@ -24,6 +24,7 @@ menuListT1<-c(
   'Indicators (Location: Avg.,Median,Mode | Variability: Stdev,IQR,Range,CV)',
   'Relationship',
   'Histogram (Continous Data)',
+  'Histogram (Custom Data: No Percentage, Only Numeric Format)',
   'Bar (Categorical Data)',
   'Frequency Table',
   'Back'
@@ -36,9 +37,10 @@ topicI<-function(){
     '1' = indicators(),
     '2' = relationship(),
     '3' = histo(),
-    '4' = bar(),
-    '5' = freqTableM(),
-    '6' = topicSelect()
+    '4' = histoCustom(),
+    '5' = bar(),
+    '6' = freqTableM(),
+    '7' = topicSelect()
   )
 }
 
@@ -132,6 +134,20 @@ histo<-function(){
   h<-hist(un, breaks = 'Sturges',plot = FALSE)
   h$density = h$counts/sum(h$counts)*100
   plot(h,freq=FALSE, xlab = cn,ylab='RF',xlim=c(0,h$breaks[length(h$breaks)]+(hn$breaks[2]-hn$breaks[1])),ylim=c(0,100),main = paste('Graph of',cn,'percentage version'),col = 'red',border='blue',labels = TRUE)
+}
+
+histoCustom<-function(){
+  x <- read.csv(file.choose())
+  cn <-colnames(x)
+  un <- unlist(x)
+  info<-toInt(inpSplit('Enter Interval (Start,End,Step) in CSV: '))
+  br<-seq(info[1],info[2],by=info[3])
+  hn<-hist(un[un>info[1]&un<info[2]], breaks =br ,plot = FALSE)
+  plot(hn,xlim=c(hn$breaks[1],hn$breaks[length(hn$breaks)]+(hn$breaks[2]-hn$breaks[1])),ylim=c(0,max(hn$counts)+round(sum(hn$counts)/length(hn$counts))),xlab = cn,main = paste('Graph of',cn),col = 'blue',border='red',labels = TRUE)
+  h<-hist(un[un>info[1]&un<info[2]], breaks = br,plot = FALSE)
+  h$density = h$counts/sum(h$counts)*100
+  plot(h,freq=FALSE, xlab = cn,ylab='RF',xlim=c(h$breaks[1],h$breaks[length(h$breaks)]+(hn$breaks[2]-hn$breaks[1])),ylim=c(0,max(h$density)+round(sum(h$density)/length(h$density))),main = paste('Graph of',cn,'percentage version'),col = 'red',border='blue',labels = TRUE)
+
 }
 
 # Barchart Function
@@ -319,7 +335,10 @@ discreteProbDistro<-function(){
 
 # Topic IV
 menuListT4<-c(
-  'Normal Distribution',
+  'Normal Distribution Graph',
+  'Normal Distribution Calculation',
+  'Uniform Distribution Calculation',
+  'Standardized Distribution Calculation',
   'Back'
 );
 
@@ -327,18 +346,103 @@ menuListT4<-c(
 topicIV<-function(){
   choice<-menu(menuListT4,title='What do you need?')
   switch (choice,
-          '1' = normalDist(),
-          '2' = topicSelect(),
+          '1' = {normalDist();topicIV()},
+          '2' = {normalDistCal();topicIV()},
+          '3' = {uniformDistCal();topicIV()},
+          '4' = {standardizeDistCal();topicIV()},
+          '5' = topicSelect(),
   )
 }
 
 normalDist<-function(){
-  stdev<-readline(prompt='Enter the standard deviation: ')
-  mean<-readline(prompt='Enter the mean: ')
-  ggdistribution(dnorm,seq(100,3000,by=10),mean=850,sd=150)
+  stdev<-toInt(readline(prompt='Enter the standard deviation: '))
+  avg<-toInt(readline(prompt='Enter the mean: '))
+  sample<-toInt(inpSplit('Enter Sample Info. (Start,End,Step) in CSV: '))
+  p<-ggdistribution(dnorm,seq(sample[1],sample[2],by=sample[3]),mean=avg,sd=stdev)
+  print(p)
 }
 
+normalDistCal<-function(){
+  type<-readline(prompt='P[X ≤ x] (default) or P[X > x] (>) or val2<x<val1 (bt) or prob->val (p): ')
+  if(identical(type,'>')){
+    info<-toInt(inpSplit('Enter (Value,Mean,Stdev) in CSV: '))
+    p<-pnorm(info[1],info[2],info[3],lower.tail = FALSE)
+    print(p)
+    cat('\n')
+  }else if(identical(type,'')){
+    info<-toInt(inpSplit('Enter (Value,Mean,Stdev) in CSV: '))
+    p<-pnorm(info[1],info[2],info[3])
+    print(p)
+    cat('\n')
+  }else if(identical(type,'p')){
+    info<-toInt(inpSplit('Enter (Prbability,Mean,Stdev) in CSV: '))
+    val<-qnorm(info[1],info[2],info[3])
+    print(val)
+    cat('\n')
+  }else{
+    info<-toInt(inpSplit('Enter (Smaller Value, Larger Value,Mean,Stdev) in CSV: '))
+    p1<-pnorm(info[1],info[3],info[4])
+    p2<-pnorm(info[2],info[3],info[4])
+    p3<-p2-p1
+    print(p3)
+    cat('\n')
+ }
+}
 
+uniformDistCal<-function(){
+  type<-readline(prompt='P[X ≤ x] (default) or P[X > x] (>) or val2<x<val1 (bt) or prob->val (p): ')
+  if(identical(type,'>')){
+    info<-toInt(inpSplit('Enter (Value,Min,Max) in CSV: '))
+    p<-punif(info[1],info[2],info[3],lower.tail = FALSE)
+    print(p)
+    cat('\n')
+  }else if(identical(type,'')){
+    info<-toInt(inpSplit('Enter (Value,Min,Max) in CSV: '))
+    p<-punif(info[1],info[2],info[3])
+    print(p)
+    cat('\n')
+  }else if(identical(type,'p')){
+    info<-toInt(inpSplit('Enter (Prbability,Min,Max) in CSV: '))
+    val<-qunif(info[1],info[2],info[3])
+    print(val)
+    cat('\n')
+  }else{
+    info<-toInt(inpSplit('Enter (Smaller Value, Larger Value,Min,Max) in CSV: '))
+    p1<-punif(info[1],info[3],info[4])
+    p2<-punif(info[2],info[3],info[4])
+    p3<-p2-p1
+    print(p3)
+    cat('\n')
+  }
+}
+
+standardizeDistCal<-function(){
+
+  type<-readline(prompt='P[X ≤ x] (default) or P[X > x] (>) or val2<x<val1 (bt) or prob->val (p): ')
+  if(identical(type,'>')){
+    info<-toInt(readline(prompt='Enter the Value: '))
+    p<-pnorm(info,lower.tail = FALSE)
+    print(p)
+    cat('\n')
+  }else if(identical(type,'')){
+    info<-toInt(readline(prompt='Enter the Value: '))
+    p<-pnorm(info)
+    print(p)
+    cat('\n')
+  }else if(identical(type,'p')){
+    info<-info<-toInt(readline(prompt='Enter the Probability: '))
+    val<-qnorm(info)
+    print(val)
+    cat('\n')
+  }else{
+    info<-toInt(inpSplit('Enter (Smaller Value, Larger Value) in CSV: '))
+    p1<-pnorm(info[1])
+    p2<-pnorm(info[2])
+    p3<-p2-p1
+    print(p3)
+    cat('\n')
+  }
+}
 
 
 # Misc.:
@@ -352,7 +456,7 @@ inpSplit<-function(text){
 # Convert to integer func
 toInt<-function(list){
   for (variable in list) {
-    int<-as.integer(variable)
+    int<-as.numeric(variable)
     return(int)
   }
 }
