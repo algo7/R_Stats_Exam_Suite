@@ -9,6 +9,7 @@ library(utils);
 library(stats);
 library(openintro);
 library(ggfortify);
+library(PEIP);
 
 
 #import the data from the file browser
@@ -564,9 +565,9 @@ standardErrCategorical<-function(){
 
 # Topic VI
 menuListT6<-c(
-  'Confidence Interval Known Sigma Normal Distribution',
-  'Standard Error Calculation (Categorical)',
-  'Sampling Distribution Calculation (Numerical)',
+  'Confidence Interval Known Sigma: Normal Distribution (Numerical)',
+  'Confidence Interval Unknown Sigma: T Distribution (Numerical)',
+  'Confidence Interval Known Sigma: Proportion (Categorical)',
   'Sampling Proportion Calculation (Categorical)',
   'Back'
 );
@@ -629,7 +630,47 @@ confIntSigKnown<-function(){
 
 # Confidence Level with Unknown Sigma (using stdev from the sample)
 confIntSigUnKnown<-function(){
-
+  filex<-file.choose()
+  # Fix newline problem
+  cat("\n", file = filex, append = TRUE)
+  x<-read.csv(file=filex,header = TRUE)
+  df<-data.frame(x)
+  # Calculate the sample size and the average | calculate the sigma
+  sig<-sd(df[,1])
+  sampleSize<-length(df[,1])
+  avg<-mean(df[,1])
+  # The confidence level
+  cl<-toInt(readline(prompt='Enter the Confidence Level (usually 95%): '))
+  sl<-1-cl
+  # The degree of freedom
+  degf<-sampleSize-1
+  # The t value (margin of error)
+  t<-tinv(cl+sl/2,degf)
+  # The standard error
+  stderr<-sig/sqrt(sampleSize)
+  # Error margin
+  em<-stderr*t
+  # Precision
+  pres<-em/avg
+  # Lower Limit
+  ll<-avg-em
+  # Upper Limit
+  ul<-avg+em
+  #The result
+  cat('\n')
+  cli_alert_success('The Results:')
+  cat('\n')
+  result<-c(paste('Sigma:',sig),paste('Sample Size:',sampleSize)
+            ,paste('Avg:',avg),paste('Confidence Level:',cl)
+            ,paste('Significance Level:',sl),paste('Degree of Freedom:',degf)
+            ,paste('T-value:',t),paste('Standard Error:',stderr),paste('Error Margin:',em),
+            paste('Precision:',pres),paste('Lower Limit:',ll),paste('Upper Limit:',ul))
+  print(result)
+  cat('\n')
+  # Warning abt analysis
+  cli_alert_warning('The analysis should at least include the point of estimate (avg),')
+  cli_alert_warning('the margin of error, the confidence level, or the lower&upper limit')
+  cat('\n')
 }
 # Misc.:
 
