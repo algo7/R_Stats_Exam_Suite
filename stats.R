@@ -1,5 +1,5 @@
 #!/usr/bin/env Rscript
-rm(list=ls())
+# rm(list=ls())
 library(ggplot2);
 library(ggpubr);
 library(digest);
@@ -774,42 +774,149 @@ testSigKnown<-function(){
   # The test statistic (standardized)
   z_cal<-(sampleAvg-testVal)/stderr
   # Cumulative probability of z_cal
-  p_val<-pnorm(z_cal)
-  # Determin the Significance Level (Alpha)
-  if(identical(testType,'Left Tail')){
-    sl<-.05
-  }else if(identical(testType,'Right Tail')){
-    sl<-.95
+  if(identical(testType,'Two Tail')){
+    p_val<-pnorm(z_cal)*2
+  }else{
+    p_val<-pnorm(z_cal)
   }
- # The critical value
- z_crit<-qnorm(sl)
- # Step 4: Decision
- if(identical(testType,'Left Tail')){
-   if(z_cal>z_crit&p_val>sl){
-     cli_alert_success(paste('Accept H0:',H0))
-     cli_alert_danger(paste('Reject H1:',H1))
-   }else if(z_cal<z_crit&p_val<sl){
+  # The Significance Level (Alpha)
+  sl<-toInt(readline(prompt='Enter the Significance Level: '))
+  # The critical value
+  if(identical(testType,'Two Tail')){
+    z_crit<-qnorm(1-sl/2)
+  }else{
+    z_crit<-qnorm(sl)
+  }
+
+  # General Info
+  ginfo<-c(paste('Sample Size:',sampleSize),paste('Average:',sampleAvg)
+            ,paste('Population Stdev:',popStdev),paste('Test Value:',testVal),
+            paste('H0:',H0),paste('H1:',H1),paste('Test Type:',testType)
+            ,paste('Standard Error:',stderr),paste('z_cal:',z_cal),
+            paste('p_val:',p_val),paste('Significance Level:',sl),paste('z_crit:',z_crit))
+  print(ginfo)
+  # Step 4: Decision
+  if(identical(testType,'Left Tail')){
+    if(z_cal>z_crit){
+      cli_alert_success(paste('Accept H0:',H0))
+      cli_alert_danger(paste('Reject H1:',H1))
+    }else if(z_cal<z_crit){
+      cli_alert_success(paste('Accept H1:',H1))
+      cli_alert_danger(paste('Reject H0:',H0))
+    }
+
+   }
+  if(identical(testType,'Right Tail')){
+    if(z_cal<z_crit){
+      cli_alert_success(paste('Accept H0:',H0))
+      cli_alert_danger(paste('Reject H1:',H1))
+    }else if(z_cal>z_crit){
      cli_alert_success(paste('Accept H1:',H1))
      cli_alert_danger(paste('Reject H0:',H0))
-   }
- }else if(identical(testType,'Right Tail')){
-   if(z_cal<z_crit&p_val>sl){
-     cli_alert_success(paste('Accept H0:',H0))
-     cli_alert_danger(paste('Reject H1:',H1))
-   }else if(z_cal>z_crit&p_val<sl){
-     cli_alert_success(paste('Accept H1:',H1))
-     cli_alert_danger(paste('Reject H0:',H0))
-   }
- }else{
-   if(abs(z_cal)<z_crit&p_val>sl){
-     cli_alert_success(paste('Accept H0:',H0))
-     cli_alert_danger(paste('Reject H1:',H1))
-   }else if(abs(z_cal)>z_crit&p_val<sl){
-     cli_alert_success(paste('Accept H1:',H1))
-     cli_alert_danger(paste('Reject H0:',H0))
-   }
+    }
+
  }
+  if(identical(testType,'Two Tail')){
+   if(abs(z_cal)<z_crit){
+     cli_alert_success(paste('Accept H0:',H0))
+     cli_alert_danger(paste('Reject H1:',H1))
+   }else if(abs(z_cal)>z_crit){
+     cli_alert_success(paste('Accept H1:',H1))
+     cli_alert_danger(paste('Reject H0:',H0))
+   }
+  }
 }
+
+testSigUnKnown<-function(){
+  # Step 0: Compute the sample size
+  sampleSize<-toInt(readline(prompt='Enter the Sample Size: '))
+  sampleAvg<-toInt(readline(prompt='Enter the Sample Average: '))
+  popStdev<-toInt(readline(prompt='Enter the Population Standard Deviation: '))
+  testVal<-toInt(readline(prompt='Enter the Value to be Tested: '))
+  # Step 1: Formulate the hypithesis
+  H1<-readline(prompt='H1-Enter Your Hypothesis: ')
+  H0<-readline(prompt='H0-Enter the Original Hypothesis: ')
+  # Step 2: Conditions of Validity
+  cli_alert_info('Sample size > 30 and known sigma(stdev): Normal Distro.')
+  cli_alert_info('Left Tail:  H0-> P=P0 | H1-> P<P0')
+  cli_alert_info('Right Tail: H0-> P=P0 | H1-> P>P0')
+  cli_alert_info('Two Tail: H0-> P=P0 | H1-> P!=P0')
+  cat('\n')
+  # Test Menu
+  testType<-function(){
+    Test<-character()
+    testMenu<-c(
+      'Left Tail',
+      'Right Tail',
+      'Two Tail'
+    );
+    choice<-menu(testMenu,title='Select Test Type: ')
+    switch (choice,
+            '1' = Test<-'Left Tail',
+            '2' = Test<-'Right Tail',
+            '3' = Test<-'Two Tail'
+    )
+  }
+  testType<-testType()
+  # Step 3: Computation
+  stderr<-popStdev/sqrt(sampleSize)
+  # The test statistic (standardized)
+  z_cal<-(sampleAvg-testVal)/stderr
+  # Cumulative probability of z_cal
+  if(identical(testType,'Two Tail')){
+    p_val<-pnorm(z_cal)*2
+  }else{
+    p_val<-pnorm(z_cal)
+  }
+  # The Significance Level (Alpha)
+  sl<-toInt(readline(prompt='Enter the Significance Level: '))
+  # The critical value
+  if(identical(testType,'Two Tail')){
+    z_crit<-qnorm(1-sl/2)
+  }else{
+    z_crit<-qnorm(sl)
+  }
+
+  # General Info
+  ginfo<-c(paste('Sample Size:',sampleSize),paste('Average:',sampleAvg)
+           ,paste('Population Stdev:',popStdev),paste('Test Value:',testVal),
+           paste('H0:',H0),paste('H1:',H1),paste('Test Type:',testType)
+           ,paste('Standard Error:',stderr),paste('z_cal:',z_cal),
+           paste('p_val:',p_val),paste('Significance Level:',sl),paste('z_crit:',z_crit))
+  print(ginfo)
+  # Step 4: Decision
+  if(identical(testType,'Left Tail')){
+    if(z_cal>z_crit){
+      cli_alert_success(paste('Accept H0:',H0))
+      cli_alert_danger(paste('Reject H1:',H1))
+    }else if(z_cal<z_crit){
+      cli_alert_success(paste('Accept H1:',H1))
+      cli_alert_danger(paste('Reject H0:',H0))
+    }
+
+  }
+  if(identical(testType,'Right Tail')){
+    if(z_cal<z_crit){
+      cli_alert_success(paste('Accept H0:',H0))
+      cli_alert_danger(paste('Reject H1:',H1))
+    }else if(z_cal>z_crit){
+      cli_alert_success(paste('Accept H1:',H1))
+      cli_alert_danger(paste('Reject H0:',H0))
+    }
+
+  }
+  if(identical(testType,'Two Tail')){
+    if(abs(z_cal)<z_crit){
+      cli_alert_success(paste('Accept H0:',H0))
+      cli_alert_danger(paste('Reject H1:',H1))
+    }else if(abs(z_cal)>z_crit){
+      cli_alert_success(paste('Accept H1:',H1))
+      cli_alert_danger(paste('Reject H0:',H0))
+    }
+  }
+}
+
+
 
 
 
