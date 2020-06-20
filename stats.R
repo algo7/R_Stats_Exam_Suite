@@ -776,7 +776,9 @@ testSigKnown<-function(){
   # Cumulative probability of z_cal
   if(identical(testType,'Two Tail')){
     p_val<-pnorm(z_cal)*2
-  }else{
+  }else if(identical(testType,'Right Tail')){
+    p_val<-pnorm(z_cal,lower.tail = FALSE)
+  }else if(identical(testType,'Left Tail')){
     p_val<-pnorm(z_cal)
   }
   # The Significance Level (Alpha)
@@ -831,7 +833,7 @@ testSigUnKnown<-function(){
   # Step 0: Compute the sample size
   sampleSize<-toInt(readline(prompt='Enter the Sample Size: '))
   sampleAvg<-toInt(readline(prompt='Enter the Sample Average: '))
-  popStdev<-toInt(readline(prompt='Enter the Population Standard Deviation: '))
+  sampleStdev<-toInt(readline(prompt='Enter the Sample Standard Deviation: '))
   testVal<-toInt(readline(prompt='Enter the Value to be Tested: '))
   # Step 1: Formulate the hypithesis
   H1<-readline(prompt='H1-Enter Your Hypothesis: ')
@@ -859,14 +861,18 @@ testSigUnKnown<-function(){
   }
   testType<-testType()
   # Step 3: Computation
-  stderr<-popStdev/sqrt(sampleSize)
+  stderr<-sampleStdev/sqrt(sampleSize)
+  # Degree of Freedom
+  degf<-sampleSize-1
   # The test statistic (standardized)
-  z_cal<-(sampleAvg-testVal)/stderr
-  # Cumulative probability of z_cal
+  t_cal<-(sampleAvg-testVal)/stderr
+  # Cumulative probability of t_cal
   if(identical(testType,'Two Tail')){
-    p_val<-pnorm(z_cal)*2
-  }else{
-    p_val<-pnorm(z_cal)
+    p_val<-pt(t_cal,degf)*2
+  }else if(identical(testType,'Right Tail')){
+    p_val<-pt(t_cal,degf,lower.tail = FALSE)
+  }else if(identical(testType,'Left Tail')){
+    p_val<-pt(t_cal,degf)
   }
   # The Significance Level (Alpha)
   sl<-toInt(readline(prompt='Enter the Significance Level: '))
@@ -881,7 +887,7 @@ testSigUnKnown<-function(){
   ginfo<-c(paste('Sample Size:',sampleSize),paste('Average:',sampleAvg)
            ,paste('Population Stdev:',popStdev),paste('Test Value:',testVal),
            paste('H0:',H0),paste('H1:',H1),paste('Test Type:',testType)
-           ,paste('Standard Error:',stderr),paste('z_cal:',z_cal),
+           ,paste('Standard Error:',stderr),paste('t_cal:',t_cal),
            paste('p_val:',p_val),paste('Significance Level:',sl),paste('z_crit:',z_crit))
   print(ginfo)
   # Step 4: Decision
