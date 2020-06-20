@@ -721,9 +721,9 @@ confIntProportion<-function(){
 
 # Topic VII
 menuListT7<-c(
-  'Confidence Interval Known Sigma: Normal Distribution (Numerical)',
-  'Confidence Interval Unknown Sigma: T Distribution (Numerical)',
-  'Confidence Interval Proportion (Categorical)',
+  'Testing with Known Sigma: Normal Distribution (Numerical)',
+  'Testing with Unknown Sigma: T Distribution (Numerical)',
+  'Testing Proportion (Categorical)',
   'Back'
 );
 
@@ -731,13 +731,85 @@ menuListT7<-c(
 topicVII<-function(){
   choice<-menu(menuListT7,title='What do you need?')
   switch (choice,
-          '1' = {confIntSigKnown();topicVI()},
-          '2' = {confIntSigUnKnown();topicVI()},
-          '3' = {confIntProportion();topicVI()},
+          '1' = {testSigKnown();topicVII()},
+          '2' = {testSigUnKnown();topicVII()},
+          '3' = {testProportion();topicVII()},
           '4' = topicSelect(),
   )
 }
 
+testSigKnown<-function(){
+  # Step 0: Compute the sample size
+  sampleSize<-toInt(readline(prompt='Enter the Sample Size: '))
+  sampleAvg<-toInt(readline(prompt='Enter the Sample Average: '))
+  popStdev<-toInt(readline(prompt='Enter the Population Standard Deviation: '))
+  testVal<-toInt(readline(prompt='Enter the Value to be Tested: '))
+  # Step 1: Formulate the hypithesis
+  H1<-readline(prompt='H1-Enter Your Hypothesis: ')
+  H0<-readline(prompt='H0-Enter the Original Hypothesis: ')
+  # Step 2: Conditions of Validity
+  cli_alert_info('Sample size > 30 and known sigma(stdev): Normal Distro.')
+  cli_alert_info('Left Tail:  H0-> P=P0 | H1-> P<P0')
+  cli_alert_info('Right Tail: H0-> P=P0 | H1-> P>P0')
+  cli_alert_info('Two Tail: H0-> P=P0 | H1-> P!=P0')
+  cat('\n')
+  # Test Menu
+  testType<-function(){
+    Test<-character()
+    testMenu<-c(
+      'Left Tail',
+      'Right Tail',
+      'Two Tail'
+    );
+    choice<-menu(testMenu,title='Select Test Type: ')
+    switch (choice,
+            '1' = Test<-'Left Tail',
+            '2' = Test<-'Right Tail',
+            '3' = Test<-'Two Tail'
+    )
+  }
+  testType<-testType()
+  # Step 3: Computation
+  stderr<-popStdev/sqrt(sampleSize)
+  # The test statistic (standardized)
+  z_cal<-(sampleAvg-testVal)/stderr
+  # Cumulative probability of z_cal
+  p_val<-pnorm(z_cal)
+  # Determin the Significance Level (Alpha)
+  if(identical(testType,'Left Tail')){
+    sl<-.05
+  }else if(identical(testType,'Right Tail')){
+    sl<-.95
+  }
+ # The critical value
+ z_crit<-qnorm(sl)
+ # Step 4: Decision
+ if(identical(testType,'Left Tail')){
+   if(z_cal>z_crit&p_val>sl){
+     cli_alert_success(paste('Accept H0:',H0))
+     cli_alert_danger(paste('Reject H1:',H1))
+   }else if(z_cal<z_crit&p_val<sl){
+     cli_alert_success(paste('Accept H1:',H1))
+     cli_alert_danger(paste('Reject H0:',H0))
+   }
+ }else if(identical(testType,'Right Tail')){
+   if(z_cal<z_crit&p_val>sl){
+     cli_alert_success(paste('Accept H0:',H0))
+     cli_alert_danger(paste('Reject H1:',H1))
+   }else if(z_cal>z_crit&p_val<sl){
+     cli_alert_success(paste('Accept H1:',H1))
+     cli_alert_danger(paste('Reject H0:',H0))
+   }
+ }else{
+   if(abs(z_cal)<z_crit&p_val>sl){
+     cli_alert_success(paste('Accept H0:',H0))
+     cli_alert_danger(paste('Reject H1:',H1))
+   }else if(abs(z_cal)>z_crit&p_val<sl){
+     cli_alert_success(paste('Accept H1:',H1))
+     cli_alert_danger(paste('Reject H0:',H0))
+   }
+ }
+}
 
 
 
