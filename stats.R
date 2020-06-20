@@ -568,7 +568,6 @@ menuListT6<-c(
   'Confidence Interval Known Sigma: Normal Distribution (Numerical)',
   'Confidence Interval Unknown Sigma: T Distribution (Numerical)',
   'Confidence Interval Proportion (Categorical)',
-  'Sampling Proportion Calculation (Categorical)',
   'Back'
 );
 
@@ -579,8 +578,7 @@ topicVI<-function(){
           '1' = {confIntSigKnown();topicVI()},
           '2' = {confIntSigUnKnown();topicVI()},
           '3' = {confIntProportion();topicVI()},
-          '4' = {normalDistCal(TRUE);topicVI()},
-          '5' = topicSelect(),
+          '4' = topicSelect(),
   )
 }
 
@@ -721,6 +719,27 @@ confIntProportion<-function(){
 }
 
 
+# Topic VII
+menuListT7<-c(
+  'Confidence Interval Known Sigma: Normal Distribution (Numerical)',
+  'Confidence Interval Unknown Sigma: T Distribution (Numerical)',
+  'Confidence Interval Proportion (Categorical)',
+  'Back'
+);
+
+# Main Menu Selection Function
+topicVII<-function(){
+  choice<-menu(menuListT7,title='What do you need?')
+  switch (choice,
+          '1' = {confIntSigKnown();topicVI()},
+          '2' = {confIntSigUnKnown();topicVI()},
+          '3' = {confIntProportion();topicVI()},
+          '4' = topicSelect(),
+  )
+}
+
+
+
 
 # Misc.:
 
@@ -768,7 +787,8 @@ topicSelect=function(){
             '3' = topicIII(),
             '4' = topicIV(),
             '5' = topicV(),
-            '6' = topicVI()
+            '6' = topicVI(),
+            '7' = topicVII(),
     )
   };
   mSelect(choice);
