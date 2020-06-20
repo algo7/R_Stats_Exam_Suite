@@ -35,13 +35,13 @@ menuListT1<-c(
 topicI<-function(){
   choice<-menu(menuListT1,title='What do you need?')
   switch (choice,
-    '1' = indicators(),
+    '1' = {indicators();topicI()},
     '2' = relationship(),
-    '3' = histo(),
-    '4' = histoCustom(),
-    '5' = bar(),
-    '6' = freqTableM(),
-    '7' = CustomfreqTableM(),
+    '3' = {histo();topicI()},
+    '4' = {histoCustom();topicI()},
+    '5' = {bar();topicI()},
+    '6' = {freqTableM();topicI()},
+    '7' = {CustomfreqTableM();topicI()},
     '8' = topicSelect()
   )
 }
@@ -58,9 +58,9 @@ subMenu<-c(
 indicators<-function(){
   choice<-menu(subMenu,title='Method? Remember the Col. Name is necessary in the CSV files)')
   switch (choice,
-          '1' = {cat(indicatorsCal(toInt(inpSplit('Enter Values Separated by a Comma: ')),'user'));cat('\n');indicators()},
-          '2' = {cat(indicatorsCal(read.csv(file.choose(),stringsAsFactors=FALSE),'csv'));cat('\n');indicators()},
-          '3' = {cat(summary(read.csv(file.choose(),stringsAsFactors=FALSE)),sep='\n');cat('\n');indicators()},
+          '1' = {cat(indicatorsCal(toInt(inpSplit('Enter Values Separated by a Comma: ')),'user'));cat('\n')},
+          '2' = {cat(indicatorsCal(read.csv(file.choose(),stringsAsFactors=FALSE),'csv'));cat('\n')},
+          '3' = {cat(summary(read.csv(file.choose(),stringsAsFactors=FALSE)),sep='\n');cat('\n')},
           '4' = topicI()
   )
 }
@@ -177,7 +177,7 @@ subMenuF<-c(
   'Back'
 )
 
-# Location Indicators Selection Function
+# Frequency Table Selection Function
 freqTableM<-function(){
   choice<-menu(subMenuF,title='Method? Remember the Col. Name is necessary in the CSV files)')
   switch (choice,
@@ -211,7 +211,7 @@ subMenuFC<-c(
   'Back'
 )
 
-# Location Indicators Selection Function
+# Custom Frequency Table Selection Function
 CustomfreqTableM<-function(){
   choice<-menu(subMenuFC,title='Method? Remember the Col. Name is necessary in the CSV files)')
   switch (choice,
@@ -222,7 +222,7 @@ CustomfreqTableM<-function(){
           '5' = topicI()
   )
 }
-# Frequency Table
+# Custom Frequency Table
 CustomfreqTable<-function(openSide,lowest){
   raw<-read.csv(file.choose())
   minVal<-as.vector(summary(raw))[1]
@@ -251,7 +251,7 @@ menuListT2<-c(
 topicII<-function(){
   choice<-menu(menuListT2,title='What do you need?')
   switch (choice,
-          '1' = probTable(),
+          '1' = {probTable();probTable()},
           '2' = topicSelect(),
   )
 }
@@ -330,7 +330,7 @@ menuListT3<-c(
 topicIII<-function(){
   choice<-menu(menuListT3,title='What do you need?')
   switch (choice,
-          '1' = discreteProbDistro(),
+          '1' = {discreteProbDistro();discreteProbDistro()},
           '2' = topicSelect(),
   )
 }
@@ -473,7 +473,7 @@ standardizeDistCal<-function(){
     print(p)
     cat('\n')
   }else if(identical(type,'p')){
-    info<-info<-toInt(readline(prompt='Enter the Probability: '))
+    info<-toInt(readline(prompt='Enter the Probability: '))
     val<-qnorm(info)
     print(val)
     cat('\n')
@@ -487,6 +487,33 @@ standardizeDistCal<-function(){
   }
 }
 
+# Topic V
+menuListT5<-c(
+  'Sampling Distribution Calculation',
+  'Normal Distribution Calculation',
+  'Uniform Distribution Calculation',
+  'Standardized Distribution Calculation',
+  'Back'
+);
+
+# Main Menu Selection Function
+topicV<-function(){
+  choice<-menu(menuListT5,title='What do you need?')
+  switch (choice,
+          '1' = {standardErr();topicV()},
+          '2' = {normalDistCal();topicV()},
+          '3' = {uniformDistCal();topicV()},
+          '4' = {standardizeDistCal();topicV()},
+          '5' = topicSelect(),
+  )
+}
+
+standardErr<-function(){
+  popStdev<-toInt(readline(prompt='Enter the Population Stdev: '))
+  popSize<-toInt(readline(prompt='Enter the Population Size: '))
+  print(paste('Stadard Error is',popStdev/sqrt(popSize)))
+  cat('\n')
+}
 
 # Misc.:
 
@@ -532,7 +559,8 @@ topicSelect=function(){
             '1' = topicI(),
             '2' = topicII(),
             '3' = topicIII(),
-            '4' = topicIV()
+            '4' = topicIV(),
+            '5' = topicV()
     )
   };
   mSelect(choice);
