@@ -27,6 +27,7 @@ menuListT1<-c(
   'Histogram (Custom Data: No Percentage, Only Numeric Format)',
   'Bar (Categorical Data)',
   'Frequency Table',
+  'Frequency Table with Custom Breaks',
   'Back'
 );
 
@@ -40,7 +41,8 @@ topicI<-function(){
     '4' = histoCustom(),
     '5' = bar(),
     '6' = freqTableM(),
-    '7' = topicSelect()
+    '7' = CustomfreqTableM(),
+    '8' = topicSelect()
   )
 }
 
@@ -138,6 +140,8 @@ histo<-function(){
 
 histoCustom<-function(){
   x <- read.csv(file.choose())
+  minVal<-as.vector(summary(x))[1]
+  cli_alert_warning(paste('Watch Out for the Minimum Value',minVal))
   cn <-colnames(x)
   un <- unlist(x)
   info<-toInt(inpSplit('Enter Interval (Start,End,Step) in CSV: '))
@@ -190,6 +194,45 @@ freqTable<-function(openSide){
   unlistraw<-unlist(raw)
   hist <- hist(unlist(raw),breaks="Sturges", plot=FALSE,include.lowest=TRUE,right=openSide)
   br=hist$breaks
+  cf = cbind(cumsum(table(cut(unlistraw,br,right=openSide))))
+  rf = cbind(table(cut(unlistraw,br,right=openSide)) /nrow(raw))
+  crf = cbind(cumsum(table(cut(unlistraw,br,right=openSide))))/nrow(raw)
+  df<-data.frame(bin=rownames(crf),AbsFreq_ni=hist$count, CumuFreq=cf, RelativeFreq_fi=rf, Cumu_RelativeFreq_Fi=crf)
+  rownames(df)<-NULL
+  print(df)
+}
+
+# Custom FreqTable Menu List
+subMenuFC<-c(
+  'Right Open',
+  'Right Closed',
+  'Right Open (UpperLimitOnly)',
+  'Right Closed (UpperLimitOnly)',
+  'Back'
+)
+
+# Location Indicators Selection Function
+CustomfreqTableM<-function(){
+  choice<-menu(subMenuFC,title='Method? Remember the Col. Name is necessary in the CSV files)')
+  switch (choice,
+          '1' = CustomfreqTable(FALSE,TRUE), #(openSide,include.lowest)
+          '2' = CustomfreqTable(TRUE,TRUE),
+          '3' = CustomfreqTable(FALSE,FALSE),
+          '4' = CustomfreqTable(TRUE,FALSE),
+          '5' = topicI()
+  )
+}
+# Frequency Table
+CustomfreqTable<-function(openSide,lowest){
+  raw<-read.csv(file.choose())
+  minVal<-as.vector(summary(raw))[1]
+  cli_alert_warning(paste('Watch Out for the Minimum Value',minVal))
+  raw<-data.frame(raw[!is.na(raw)])
+  info<-toInt(inpSplit('Enter Interval (Start,End,Step) in CSV: '))
+  unlistraw<-unlist(raw)
+  unlistraw<-unlistraw[unlistraw>info[1]&unlistraw<info[2]]
+  br<-seq(info[1],info[2],by=info[3])
+  hist <- hist(unlistraw,breaks=br, plot=FALSE,include.lowest=lowest,right=openSide)
   cf = cbind(cumsum(table(cut(unlistraw,br,right=openSide))))
   rf = cbind(table(cut(unlistraw,br,right=openSide)) /nrow(raw))
   crf = cbind(cumsum(table(cut(unlistraw,br,right=openSide))))/nrow(raw)
