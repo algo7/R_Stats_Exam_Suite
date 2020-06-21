@@ -133,10 +133,10 @@ histo<-function(){
   cn <-colnames(x)
   un <- unlist(x)
   hn<-hist(un, breaks = 'Sturges',plot = FALSE)
-  plot(hn,xlim=c(0,hn$breaks[length(hn$breaks)]+(hn$breaks[2]-hn$breaks[1])),ylim=c(0,hn$counts[1]+round(sum(hn$counts)/length(hn$counts))),xlab = cn,main = paste('Graph of',cn),col = 'blue',border='red',labels = TRUE)
+  plot(hn,xlim=c(hn$breaks[1]-((hn$breaks[2]-hn$breaks[1]))*1.5,hn$breaks[length(hn$breaks)]+(hn$breaks[2]-hn$breaks[1])),ylim=c(0,max(hn$counts)+round(sum(hn$counts)/length(hn$counts))),xlab = cn,main = paste('Graph of',cn),col = 'blue',border='red',labels = TRUE)
   h<-hist(un, breaks = 'Sturges',plot = FALSE)
   h$density = h$counts/sum(h$counts)*100
-  plot(h,freq=FALSE, xlab = cn,ylab='RF',xlim=c(0,h$breaks[length(h$breaks)]+(hn$breaks[2]-hn$breaks[1])),ylim=c(0,100),main = paste('Graph of',cn,'percentage version'),col = 'red',border='blue',labels = TRUE)
+  plot(h,freq=FALSE, xlab = cn,ylab='RF',xlim=c(hn$breaks[1]-((hn$breaks[2]-hn$breaks[1]))*1.5,h$breaks[length(h$breaks)]+(hn$breaks[2]-hn$breaks[1])),ylim=c(0,max(h$density)+round(sum(h$density)/length(h$density))),main = paste('Graph of',cn,'percentage version'),col = 'red',border='blue',labels = TRUE)
 }
 
 histoCustom<-function(){
@@ -148,10 +148,10 @@ histoCustom<-function(){
   info<-toInt(inpSplit('Enter Interval (Start,End,Step) in CSV: '))
   br<-seq(info[1],info[2],by=info[3])
   hn<-hist(un[un>info[1]&un<info[2]], breaks =br ,plot = FALSE)
-  plot(hn,xlim=c(hn$breaks[1],hn$breaks[length(hn$breaks)]+(hn$breaks[2]-hn$breaks[1])),ylim=c(0,max(hn$counts)+round(sum(hn$counts)/length(hn$counts))),xlab = cn,main = paste('Graph of',cn),col = 'blue',border='red',labels = TRUE)
+  plot(hn,xlim=c(hn$breaks[1]-((hn$breaks[2]-hn$breaks[1]))*1.5,hn$breaks[length(hn$breaks)]+(hn$breaks[2]-hn$breaks[1])),ylim=c(0,max(hn$counts)+round(sum(hn$counts)/length(hn$counts))),xlab = cn,main = paste('Graph of',cn),col = 'blue',border='red',labels = TRUE)
   h<-hist(un[un>info[1]&un<info[2]], breaks = br,plot = FALSE)
   h$density = h$counts/sum(h$counts)*100
-  plot(h,freq=FALSE, xlab = cn,ylab='RF',xlim=c(h$breaks[1],h$breaks[length(h$breaks)]+(hn$breaks[2]-hn$breaks[1])),ylim=c(0,max(h$density)+round(sum(h$density)/length(h$density))),main = paste('Graph of',cn,'percentage version'),col = 'red',border='blue',labels = TRUE)
+  plot(h,freq=FALSE, xlab = cn,ylab='RF',xlim=c(hn$breaks[1]-((hn$breaks[2]-hn$breaks[1]))*1.5,h$breaks[length(h$breaks)]+(hn$breaks[2]-hn$breaks[1])),ylim=c(0,max(h$density)+round(sum(h$density)/length(h$density))),main = paste('Graph of',cn,'percentage version'),col = 'red',border='blue',labels = TRUE)
 
 }
 
@@ -1029,8 +1029,6 @@ testProportion<-function(){
 # Topic VIII
 menuListT8<-c(
   'Simple Linear Regression',
-  'Testing with Unknown Sigma: T Distribution (Numerical)',
-  'Testing Proportion (Categorical)',
   'Back'
 );
 
@@ -1039,9 +1037,7 @@ topicVIII<-function(){
   choice<-menu(menuListT8,title='What do you need?')
   switch (choice,
           '1' = {simpRegress();topicVIII()},
-          '2' = {testSigUnKnown();topicVIII()},
-          '3' = {testProportion();topicVIII()},
-          '4' = topicSelect(),
+          '2' = topicSelect(),
   )
 }
 
@@ -1126,6 +1122,71 @@ simpRegress<-function(){
   cat('\n')
 }
 
+# Topic VIX
+menuListT9<-c(
+  'Summary Function (Descriptive Stats. Info.)',
+  'Back'
+);
+
+# Main Menu Selection Function
+topicVIX<-function(){
+  choice<-menu(menuListT9,title='What do you need?')
+  switch (choice,
+          '1' = {summaryM();topicVIX()},
+          '2' = topicSelect(),
+  )
+}
+
+# Custom FreqTable Menu List
+summaryMenu<-c(
+  'Right Open',
+  'Right Closed',
+  'Right Open (UpperLimitOnly)',
+  'Right Closed (UpperLimitOnly)',
+  'Back'
+)
+
+# Custom Frequency Table Selection Function
+summaryM<-function(){
+  choice<-menu(summaryMenu,title='Method? Remember the Col. Name is necessary in the CSV files)')
+  switch (choice,
+          '1' = summaryFunc(FALSE,TRUE), #(openSide,include.lowest)
+          '2' = summaryFunc(TRUE,TRUE),
+          '3' = summaryFunc(FALSE,FALSE),
+          '4' = summaryFunc(TRUE,FALSE),
+          '5' = topicVIX()
+  )
+}
+
+# Custom Frequency Table
+summaryFunc<-function(openSide,lowest){
+  raw<-read.csv(file.choose(),header=TRUE)
+  summary(raw)
+  craw<-raw
+  for (col in colnames(craw)) {
+    raw<-data.frame(craw[,col])
+    raw<-data.frame(raw[!is.na(raw)])
+    un<-unlist(raw)
+    hist <- hist(un,breaks="Sturges", plot=FALSE,include.lowest=lowest,right=openSide)
+    br=hist$breaks
+    cf = cbind(cumsum(table(cut(un,br,right=openSide,include.lowest=lowest))))
+    rf = cbind(table(cut(un,br,right=openSide,include.lowest=lowest)) /nrow(raw))
+    crf = cbind(cumsum(table(cut(un,br,right=openSide,include.lowest=lowest))))/nrow(raw)
+    df<-data.frame(bin=rownames(crf),AbsFreq_ni=hist$count, CumuFreq=cf, RelativeFreq_fi=rf, Cumu_RelativeFreq_Fi=crf)
+    rownames(df)<-NULL
+    cli_alert_info(paste('Frequency Table of',col))
+    print(df)
+    cn <-col
+    hn<-hist(un, breaks = 'Sturges',plot = FALSE,include.lowest=lowest,right=openSide)
+    print(hn$breaks)
+    plot(hn,xlim=c(hn$breaks[1]-((hn$breaks[2]-hn$breaks[1]))*1.5,hn$breaks[length(hn$breaks)]+(hn$breaks[2]-hn$breaks[1])),ylim=c(0,max(hn$counts)+round(sum(hn$counts)/length(hn$counts))),xlab = cn,main = paste('Graph of',cn),col = 'blue',border='red',labels = TRUE)
+    h<-hist(un, breaks = 'Sturges',plot = FALSE,include.lowest=lowest,right=openSide)
+    h$density = h$counts/sum(h$counts)*100
+    plot(h,freq=FALSE, xlab = cn,ylab='RF',xlim=c(hn$breaks[1]-((hn$breaks[2]-hn$breaks[1]))*1.5,h$breaks[length(h$breaks)]+(hn$breaks[2]-hn$breaks[1])),ylim=c(0,max(h$density)+round(sum(h$density)/length(h$density))),main = paste('Graph of',cn,'percentage version'),col = 'red',border='blue',labels = TRUE)
+
+  }
+}
+
 
 # Misc.:
 
@@ -1175,7 +1236,8 @@ topicSelect=function(){
             '5' = topicV(),
             '6' = topicVI(),
             '7' = topicVII(),
-            '8' = topicVIII()
+            '8' = topicVIII(),
+            '9' = topicVIX()
     )
   };
   mSelect(choice);
