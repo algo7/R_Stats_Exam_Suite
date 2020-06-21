@@ -1026,7 +1026,105 @@ testProportion<-function(){
   }
 }
 
+# Topic VIII
+menuListT8<-c(
+  'Simple Linear Regression',
+  'Testing with Unknown Sigma: T Distribution (Numerical)',
+  'Testing Proportion (Categorical)',
+  'Back'
+);
 
+# Main Menu Selection Function
+topicVIII<-function(){
+  choice<-menu(menuListT8,title='What do you need?')
+  switch (choice,
+          '1' = {simpRegress();topicVIII()},
+          '2' = {testSigUnKnown();topicVIII()},
+          '3' = {testProportion();topicVIII()},
+          '4' = topicSelect(),
+  )
+}
+
+simpRegress<-function(){
+  x<-read.csv(file.choose())
+  df<-data.frame(x)
+  col1<-colnames(df)[1]
+  col2<-colnames(df)[2]
+  print(paste('1:',col1,' 2:',col2))
+  H0<-'There is no relationship & the slope = 0'
+  H1<-'There is a relationship'
+  # the Formula
+  # Formula Selection Function
+  opt1<-paste(col1,'=','a + b *',col2)
+  opt2<-paste(col2,'=','a + b *',col1)
+  regFormSelect<-function(){
+    formlula<-character()
+    regFormMenu<-c(
+      opt1<-paste(col1,'=','a + b *',col2),
+      opt2<-paste(col2,'=','a + b *',col1)
+    );
+    choice<-menu(regFormMenu,title='Select Relationship Type: ')
+    switch (choice,
+            '1' = formlula<-c(opt1,col1,col2),
+            '2' = formlula<-c(opt2,col2,col1)
+    )
+  }
+  formula<-regFormSelect()
+  # The regression formula
+  formulaF<-as.formula(paste(formula[2],formula[3],sep = '~'))
+  # Generate the model
+  lmod<-lm(formulaF,df)
+  # The summary
+  slmod<-summary(lmod)
+  # The coefficients
+  slmodc<-slmod$coefficients
+  # The p-value
+  p_val<-slmodc[formula[3],'Pr(>|t|)']
+  # The significance Level
+  sl<-0.005
+  # The final formulas
+  textForm<-paste(formula[2],'=',formula[3],'*',slmodc[formula[3],'Estimate'],'+',slmodc['(Intercept)','Estimate'])
+  varForm<-paste(formula[2],'=',slmodc[formula[3],'Estimate'],'x','+',slmodc['(Intercept)','Estimate'])
+  # Prediction Function
+  predictFunc<-function(){
+    preVal<-toInt(readline(prompt='Enter the Value to be Predicted: '))
+    return(preVal*slmodc[formula[3],'Estimate']+slmodc['(Intercept)','Estimate'])
+  }
+  # The predicted value
+  predicted_val<-lmod$fitted.values
+  # The residula value
+  residual_val<-residuals(lmod)
+  # The standard errs
+  st_res_val<-residual_val/sd(residual_val) #using the formula
+  st_res_val_rs<-rstandard(lmod) #using the rstandard function
+  # Bind all of them in to a data frame
+  finaldf<-data.frame(cbind(predicted_val,residual_val,st_res_val,st_res_val_rs))
+  # The results
+  cli_alert_success('The Result: ')
+  cat('\n')
+  if(sl>p_val){
+    cli_alert_info('Hypothesis: ')
+    cli_alert_success(paste('Accept H1',H1))
+    cli_alert_danger(paste('Reject H0',H0))
+  }else{
+    cli_alert_info('Hypothesis: ')
+    cli_alert_success(paste('Accept H0',H0))
+    cli_alert_danger(paste('Reject H1',H1))
+  }
+  cat('\n')
+  cli_alert_info('Formulas: ')
+  print(paste('Formula (text):',textForm))
+  print(paste('Formula (variable):',varForm))
+  cat('\n')
+  cli_alert_info('Summary: ')
+  print(slmod)
+  cli_alert_info('Table: ')
+  print(finaldf)
+  cat('\n')
+  predictResult<-predictFunc()
+  cli_alert_success(paste('Prediction:', predictResult))
+  cat('\n')
+}
 
 
 # Misc.:
@@ -1077,6 +1175,7 @@ topicSelect=function(){
             '5' = topicV(),
             '6' = topicVI(),
             '7' = topicVII(),
+            '8' = topicVIII()
     )
   };
   mSelect(choice);
