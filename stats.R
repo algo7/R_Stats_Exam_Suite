@@ -10,6 +10,7 @@ library(stats);
 library(openintro);
 library(ggfortify);
 library(PEIP);
+library(corrplot)
 
 
 #import the data from the file browser
@@ -963,7 +964,6 @@ testProportion<-function(){
     navg<-1-avg
     stderr<-(avg*navg)/sampleSize
   }else if(identical(samp,'n')){
-    print('x')
     stderr<-sqrt((testVal*(1-testVal)/sampleSize))
   }
 
@@ -1028,7 +1028,7 @@ testProportion<-function(){
 
 # Topic VIII
 menuListT8<-c(
-  'Simple Linear Regression',
+  'Simple Regression',
   'Back'
 );
 
@@ -1051,8 +1051,6 @@ simpRegress<-function(){
   H1<-'There is a relationship'
   # the Formula
   # Formula Selection Function
-  opt1<-paste(col1,'=','a + b *',col2)
-  opt2<-paste(col2,'=','a + b *',col1)
   regFormSelect<-function(){
     formlula<-character()
     regFormMenu<-c(
@@ -1125,6 +1123,7 @@ simpRegress<-function(){
 # Topic VIX
 menuListT9<-c(
   'Summary Function (Descriptive Stats. Info.)',
+  'Multiple Regression',
   'Back'
 );
 
@@ -1133,11 +1132,12 @@ topicVIX<-function(){
   choice<-menu(menuListT9,title='What do you need?')
   switch (choice,
           '1' = {summaryM();topicVIX()},
-          '2' = topicSelect(),
+          '2' = {multiRegress();topicVIX()},
+          '3' = topicSelect(),
   )
 }
 
-# Custom FreqTable Menu List
+# Summary Menu List
 summaryMenu<-c(
   'Right Open',
   'Right Closed',
@@ -1146,7 +1146,7 @@ summaryMenu<-c(
   'Back'
 )
 
-# Custom Frequency Table Selection Function
+# Summary  Selection Function
 summaryM<-function(){
   choice<-menu(summaryMenu,title='Method? Remember the Col. Name is necessary in the CSV files)')
   switch (choice,
@@ -1158,15 +1158,26 @@ summaryM<-function(){
   )
 }
 
-# Custom Frequency Table
+# Summary Function
 summaryFunc<-function(openSide,lowest){
   raw<-read.csv(file.choose(),header=TRUE)
-  summary(raw)
+  cli_alert_info(paste('The Summary:'))
+  cat('\n')
+  print(summary(raw))
+  cat('\n')
   craw<-raw
+  cli_alert_info(paste('The Correlation Table in %:'))
+  cat('\n')
+  craw.cor<-cor(craw)
+  print(craw.cor*100)
+  corrplot(craw.cor)
+  cat('\n')
+  # Loop through the columns
   for (col in colnames(craw)) {
     raw<-data.frame(craw[,col])
     raw<-data.frame(raw[!is.na(raw)])
     un<-unlist(raw)
+    # Frequency Table
     hist <- hist(un,breaks="Sturges", plot=FALSE,include.lowest=lowest,right=openSide)
     br=hist$breaks
     cf = cbind(cumsum(table(cut(un,br,right=openSide,include.lowest=lowest))))
@@ -1175,18 +1186,144 @@ summaryFunc<-function(openSide,lowest){
     df<-data.frame(bin=rownames(crf),AbsFreq_ni=hist$count, CumuFreq=cf, RelativeFreq_fi=rf, Cumu_RelativeFreq_Fi=crf)
     rownames(df)<-NULL
     cli_alert_info(paste('Frequency Table of',col))
+    cat('\n')
     print(df)
+    cat('\n')
+    # Graph
     cn <-col
     hn<-hist(un, breaks = 'Sturges',plot = FALSE,include.lowest=lowest,right=openSide)
-    print(hn$breaks)
-    plot(hn,xlim=c(hn$breaks[1]-((hn$breaks[2]-hn$breaks[1]))*1.5,hn$breaks[length(hn$breaks)]+(hn$breaks[2]-hn$breaks[1])),ylim=c(0,max(hn$counts)+round(sum(hn$counts)/length(hn$counts))),xlab = cn,main = paste('Graph of',cn),col = 'blue',border='red',labels = TRUE)
+    # Frequency
+    plot(hn,xlim=c(hn$breaks[1]-((hn$breaks[2]-hn$breaks[1]))*1.5,hn$breaks[length(hn$breaks)]+(hn$breaks[2]-hn$breaks[1]))
+         ,ylim=c(0,max(hn$counts)+round(sum(hn$counts)/length(hn$counts)))
+         ,xlab = cn,main = paste('Graph of',cn),col = 'blue',border='red',labels = TRUE)
+    # Density
     h<-hist(un, breaks = 'Sturges',plot = FALSE,include.lowest=lowest,right=openSide)
     h$density = h$counts/sum(h$counts)*100
-    plot(h,freq=FALSE, xlab = cn,ylab='RF',xlim=c(hn$breaks[1]-((hn$breaks[2]-hn$breaks[1]))*1.5,h$breaks[length(h$breaks)]+(hn$breaks[2]-hn$breaks[1])),ylim=c(0,max(h$density)+round(sum(h$density)/length(h$density))),main = paste('Graph of',cn,'percentage version'),col = 'red',border='blue',labels = TRUE)
-
+    plot(h,freq=FALSE, xlab = cn,ylab='RF'
+         ,xlim=c(hn$breaks[1]-((hn$breaks[2]-hn$breaks[1]))*1.5,h$breaks[length(h$breaks)]+(hn$breaks[2]-hn$breaks[1]))
+         ,ylim=c(0,max(h$density)+round(sum(h$density)/length(h$density)))
+         ,main = paste('Graph of',cn,'percentage version'),col = 'red',border='blue',labels = TRUE)
   }
 }
 
+multiRegress<-function(){
+  x<-read.csv(file.choose())
+  df<-data.frame(x)
+  colN<-character()
+  regFormMenu<-character()
+  for (col in 1:length(colnames(df))) {
+    colN<-c(colN,colnames(df)[col])
+    regFormMenu<-c(regFormMenu,paste(colnames(df)[col],'=','b1x1 + b2x2 +...bnxn'))
+  }
+  colNDF<-data.frame(colN)
+  colnames(colNDF)<-NULL
+  print(colNDF)
+  H0<-'There is no relationship & the slope = 0'
+  H1<-'There is a relationship'
+  # Formula Selection
+  choice<-menu(regFormMenu,title='Select Relationship Type: ')
+  # The choice as the dependent variable
+  depdVar<-colnames(df)[choice]
+  # The the rest as independent variables
+  indepVar<-character()
+  for (col in colnames(df)) {
+    if(!identical(col,depdVar)){
+      indepVar<-c(indepVar,col)
+    }
+  }
+  # The regression formula
+  formula<-as.formula(paste(depdVar,paste(indepVar,collapse='+'),sep='~'))
+  # Generate the model
+  lmod<-lm(formula,df)
+  # The summary
+  slmod<-summary(lmod)
+  # The coefficients
+  slmodc<-slmod$coefficients
+  # The p-value
+  p_vals<-slmodc[,'Pr(>|t|)']
+  p_vals<-data.frame(p_vals)
+  print(p_vals)
+  # Optimization
+  optimizationMenu<-c('True','False')
+  choice<-menu(optimizationMenu,title='Optimize (Remove Largest P-value)? ')
+  if(identical(choice,1L)){
+    filterx<-rownames(p_vals)=='(Intercept)'#Filter out the p val. of the intercept
+    p_vals<-p_vals[-filterx,,drop=FALSE]
+    p_vals<-p_vals[p_vals<max(p_vals),,drop=FALSE] #Drop the largest p val
+    newRow<-rownames(p_vals)
+    filtery<-indepVar%in%newRow
+    indepVar<-indepVar[filtery]
+    formula<-as.formula(paste(depdVar,paste(indepVar,collapse='+'),sep='~'))
+    lmod<-lm(formula,df)
+    # The summary
+    slmod<-summary(lmod)
+    # The coefficients
+    slmodc<-slmod$coefficients
+    # The p-value
+    p_vals<-slmodc[,'Pr(>|t|)']
+    p_vals<-data.frame(p_vals)
+  }
+  # The significance Level
+  sl<-0.005
+  # Assembling the final formula
+  dispFor<-character()
+  for (row in rownames(slmodc)) {
+    if(!identical(row,'(Intercept)')){
+      dispFor<-c( dispFor,paste(row,slmodc[row,'Estimate'],sep='*'))
+    }
+  }
+  # The final formula
+  textForm<-paste(depdVar,'=',slmodc['(Intercept)','Estimate'],'+',paste(dispFor,collapse = ' + '))
+  # Prediction Function
+  predictFunc<-function(){
+    info<-toInt(inpSplit(paste('Enter Values in CSV in Order: ','[',paste(indepVar,collapse = ' -> '),']:')))
+    i<-0
+    presum<-numeric()
+    for (val in info) {
+      i<-i+1
+      presum<-c(presum,val*(slmodc[indepVar[i],'Estimate']))
+    }
+    return(sum(presum)+slmodc['(Intercept)','Estimate'])
+  }
+  # The predicted value
+  predicted_val<-lmod$fitted.values
+  # The residula value
+  residual_val<-residuals(lmod)
+  # The standard errs
+  st_res_val<-residual_val/sd(residual_val) #using the formula
+  st_res_val_rs<-rstandard(lmod) #using the rstandard function
+  # Bind all of them in to a data frame
+  finaldf<-data.frame(cbind(predicted_val,residual_val,st_res_val,st_res_val_rs))
+  # The results
+  cli_alert_success('The Result: ')
+  cat('\n')
+  i<-0 #The first one is the intercept
+  for (p_v in p_vals[indepVar,]) {
+    i<-i+1
+    if(sl>p_v){
+      cli_alert_info('Hypothesis: ')
+      cli_alert_success(paste('Accept H1',H1,'With:',rownames(p_vals[indepVar,,drop=FALSE])[i]))
+      cli_alert_danger(paste('Reject H0',H0,'With:',rownames(p_vals[indepVar,,drop=FALSE])[i]))
+    }else{
+      cli_alert_info('Hypothesis: ')
+      cli_alert_success(paste('Accept H0',H0,'With:',rownames(p_vals[indepVar,,drop=FALSE])[i]))
+      cli_alert_danger(paste('Reject H1',H1,'With:',rownames(p_vals[indepVar,,drop=FALSE])[i]))
+    }
+  }
+  cat('\n')
+  cli_alert_info('Formulas: ')
+  print(paste('Formula (text):',textForm))
+  cat('\n')
+  cli_alert_info('Summary: ')
+  print(slmod)
+  cli_alert_info('Table: ')
+  print(finaldf)
+  cat('\n')
+  predictResult<-predictFunc()
+  cli_alert_warning('Remeber the Units')
+  cli_alert_success(paste('Prediction:', predictResult))
+  cat('\n')
+}
 
 # Misc.:
 
