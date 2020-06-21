@@ -17,7 +17,7 @@ library(corrplot)
 # data <- read.csv(file.choose(),stringsAsFactors=FALSE);
 
 # Welcome Message
-welcomeMsg<-'Hi Welcome to the Stats Terminal'
+welcomeMsg<-'Hi Welcome to the Stats Terminal by Aviv'
 cli::cat_boxx(welcomeMsg)
 
 # Topic 1
@@ -188,6 +188,7 @@ freqTableM<-function(){
           '3' = topicI()
   )
 }
+
 # Frequency Table
 freqTable<-function(openSide){
   raw<-read.csv(file.choose())
@@ -224,6 +225,7 @@ CustomfreqTableM<-function(){
           '5' = topicI()
   )
 }
+
 # Custom Frequency Table
 CustomfreqTable<-function(openSide,lowest){
   raw<-read.csv(file.choose())
@@ -1207,6 +1209,7 @@ summaryFunc<-function(openSide,lowest){
 }
 
 multiRegress<-function(){
+  cli_alert_warning('Format Excel Data in the Genral Format and Include the Header')
   x<-read.csv(file.choose())
   df<-data.frame(x)
   colN<-character()
@@ -1245,7 +1248,7 @@ multiRegress<-function(){
   print(p_vals)
   # Optimization
   optimizationMenu<-c('True','False')
-  choice<-menu(optimizationMenu,title='Optimize (Remove Largest P-value)? ')
+  choice<-menu(optimizationMenu,title='Optimize (Remove Larest P-value Except for the Intercept)? ')
   if(identical(choice,1L)){
     filterx<-rownames(p_vals)=='(Intercept)'#Filter out the p val. of the intercept
     p_vals<-p_vals[-filterx,,drop=FALSE]
@@ -1274,6 +1277,10 @@ multiRegress<-function(){
   }
   # The final formula
   textForm<-paste(depdVar,'=',slmodc['(Intercept)','Estimate'],'+',paste(dispFor,collapse = ' + '))
+  partial1<-paste(depdVar,'=',slmodc['(Intercept)','Estimate']+slmodc[indepVar[length(indepVar)],'Estimate']*1,'+',paste(dispFor[-length(dispFor)],collapse = ' + '))
+  partial0<-paste(depdVar,'=',slmodc['(Intercept)','Estimate']+slmodc[indepVar[length(indepVar)],'Estimate']*0,'+',paste(dispFor[-length(dispFor)],collapse = ' + '))
+  optimizationMenu<-c('True','False')
+  partialChoice<-menu(optimizationMenu,title='Partial Formula?? ')
   # Prediction Function
   predictFunc<-function(){
     info<-toInt(inpSplit(paste('Enter Values in CSV in Order: ','[',paste(indepVar,collapse = ' -> '),']:')))
@@ -1297,7 +1304,8 @@ multiRegress<-function(){
   # The results
   cli_alert_success('The Result: ')
   cat('\n')
-  i<-0 #The first one is the intercept
+  # Check the Hypothesis
+  i<-0
   for (p_v in p_vals[indepVar,]) {
     i<-i+1
     if(sl>p_v){
@@ -1312,7 +1320,11 @@ multiRegress<-function(){
   }
   cat('\n')
   cli_alert_info('Formulas: ')
-  print(paste('Formula (text):',textForm))
+  print(paste('Formula (Full):',textForm))
+  if(identical(partialChoice,1L)){
+    print(paste('Partial Formula (0):',partial0))
+    print(paste('Partial Formula (1):',partial1))
+  }
   cat('\n')
   cli_alert_info('Summary: ')
   print(slmod)
