@@ -1279,7 +1279,7 @@ multiRegress<-function(){
   print(p_vals)
   anovaT<-anova(lmod)
   # Scatter Plot
-  scatPlot<-ggPredict(lmod,se=TRUE,interactive = TRUE)
+  # scatPlot<-ggPredict(lmod,se=TRUE,interactive = TRUE)
   # Optimization
   optimizationMenu<-c('True','False')
   choice<-menu(optimizationMenu,title='Optimize (Remove Larest P-value Except for the Intercept)? ')
@@ -1300,7 +1300,7 @@ multiRegress<-function(){
     p_vals<-slmodc[,'Pr(>|t|)']
     p_vals<-data.frame(p_vals)
     anovaT<-anova(lmod)
-    scatPlot<-ggPredict(lmod,se=TRUE,interactive = TRUE)
+    # scatPlot<-ggPredict(lmod,se=TRUE,interactive = TRUE)
   }
   # The significance Level
   sl<-0.005
@@ -1339,7 +1339,7 @@ multiRegress<-function(){
   finaldf<-data.frame(cbind(predicted_val,residual_val,st_res_val,st_res_val_rs))
   # The results
   cli_alert_success('The Result: ')
-  print(scatPlot)
+  # print(scatPlot)
   cat('\n')
   # Check the Hypothesis
   i<-0
@@ -1397,6 +1397,8 @@ topicX<-function(){
 chi2Test<-function(){
   # Import the file
   filex<-file.choose()
+  H0<-'Are Two Independent Variable'
+  H1<-'Are TWo Dependent Vairbale'
   # Fix newline problem
   cat("\n", file = filex, append = TRUE)
   x<-read.csv(file=filex)
@@ -1405,7 +1407,6 @@ chi2Test<-function(){
   rownames(df)<-df[,1]
   df[-c(1),-c(1)]
   df<-df[,-1]
-
   # Vertical Sum
   verticalTotal<-numeric()
   for (col in colnames(df)) {
@@ -1442,7 +1443,9 @@ chi2Test<-function(){
   print(condProb)
   cat('\n')
   # Degree of Freedom
+  cli_alert_info('Degree of Freedom:')
   degf<-(length(colnames(condProb))-1) * (length(rownames(condProb))-1)
+  print(degf)
   # Remove the Total column
   x<-per[length(rownames(per)),]
   x[,length(colnames(x))]<-NULL
