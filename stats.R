@@ -10,7 +10,9 @@ library(stats);
 library(openintro);
 library(ggfortify);
 library(PEIP);
-library(corrplot)
+library(corrplot);
+library(ggiraphExtra)
+
 
 
 #import the data from the file browser
@@ -1098,6 +1100,8 @@ simpRegress<-function(){
   # Bind all of them in to a data frame
   finaldf<-data.frame(cbind(predicted_val,residual_val,st_res_val,st_res_val_rs))
   # The results
+  # Scatter Plot
+  print(ggPredict(lmod,se=TRUE,interactive = TRUE))
   cli_alert_success('The Result: ')
   cat('\n')
   if(sl>p_val){
@@ -1213,6 +1217,7 @@ summaryFunc<-function(openSide,lowest){
   }
 }
 
+# Multiple Regression
 multiRegress<-function(){
   cli_alert_warning('Format Excel Data in the Genral Format and Include the Header')
   x<-read.csv(file.choose())
@@ -1252,6 +1257,8 @@ multiRegress<-function(){
   p_vals<-data.frame(p_vals)
   print(p_vals)
   anovaT<-anova(lmod)
+  # Scatter Plot
+  scatPlot<-ggPredict(lmod,se=TRUE,interactive = TRUE)
   # Optimization
   optimizationMenu<-c('True','False')
   choice<-menu(optimizationMenu,title='Optimize (Remove Larest P-value Except for the Intercept)? ')
@@ -1272,6 +1279,7 @@ multiRegress<-function(){
     p_vals<-slmodc[,'Pr(>|t|)']
     p_vals<-data.frame(p_vals)
     anovaT<-anova(lmod)
+    scatPlot<-ggPredict(lmod,se=TRUE,interactive = TRUE)
   }
   # The significance Level
   sl<-0.005
@@ -1310,6 +1318,7 @@ multiRegress<-function(){
   finaldf<-data.frame(cbind(predicted_val,residual_val,st_res_val,st_res_val_rs))
   # The results
   cli_alert_success('The Result: ')
+  print(scatPlot)
   cat('\n')
   # Check the Hypothesis
   i<-0
@@ -1345,6 +1354,21 @@ multiRegress<-function(){
   cli_alert_warning('Remeber the Units')
   cli_alert_success(paste('Prediction:', predictResult))
   cat('\n')
+}
+
+# Topic X
+menuListT10<-c(
+  'Simple Regression',
+  'Back'
+);
+
+# Main Menu Selection Function
+topicX<-function(){
+  choice<-menu(menuListT10,title='What do you need?')
+  switch (choice,
+          '1' = {simpRegress();topicX()},
+          '2' = topicSelect(),
+  )
 }
 
 # Misc.:
