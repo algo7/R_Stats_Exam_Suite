@@ -1076,6 +1076,8 @@ simpRegress<-function(){
   slmodc<-slmod$coefficients
   # The p-value
   p_val<-slmodc[formula[3],'Pr(>|t|)']
+  #ANOVA
+  anovaT<-anova(lmod)
   # The significance Level
   sl<-0.005
   # The final formulas
@@ -1114,6 +1116,9 @@ simpRegress<-function(){
   cat('\n')
   cli_alert_info('Summary: ')
   print(slmod)
+  cat('\n')
+  print(anovaT)
+  cat('\n')
   cli_alert_info('Table: ')
   print(finaldf)
   cat('\n')
@@ -1246,6 +1251,7 @@ multiRegress<-function(){
   p_vals<-slmodc[,'Pr(>|t|)']
   p_vals<-data.frame(p_vals)
   print(p_vals)
+  anovaT<-anova(lmod)
   # Optimization
   optimizationMenu<-c('True','False')
   choice<-menu(optimizationMenu,title='Optimize (Remove Larest P-value Except for the Intercept)? ')
@@ -1265,6 +1271,7 @@ multiRegress<-function(){
     # The p-value
     p_vals<-slmodc[,'Pr(>|t|)']
     p_vals<-data.frame(p_vals)
+    anovaT<-anova(lmod)
   }
   # The significance Level
   sl<-0.005
@@ -1328,6 +1335,9 @@ multiRegress<-function(){
   cat('\n')
   cli_alert_info('Summary: ')
   print(slmod)
+  cat('\n')
+  print(anovaT)
+  cat('\n')
   cli_alert_info('Table: ')
   print(finaldf)
   cat('\n')
