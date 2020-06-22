@@ -295,27 +295,22 @@ probTable<-function(){
   # Calculate the percentage table
   per<-data.frame(df/grandSum)
   # The Table with the sum
+  cli_alert_info('Sum Table:')
   print(df)
   cat('\n')
   # The percentage table
+  cli_alert_info('Percentage Table:')
   print(per)
   cat('\n')
-  # Conditional Probability P(row|col)
+  # Conditional Probability
   cli_alert_info('Conditional Probability:')
   condProb<-df[!(rownames(df)=='Total'),]
   condProb<-condProb/condProb[,'Total']
   condProb<-condProb[,!(colnames(df)=='Total')]
   print(condProb)
-  # Barplot
-  condPM<-as.matrix(condProb)
-  bp<-barplot(condPM,ylab = 'Percentage',
-              ylim=c(0,max(condPM*3)),
-              ,legend=c(rownames(condPM))
-              ,col=c("red","skyblue"),
-              args.legend=list(x='topright',bty="n",border=NA))
-  f<-bp+text(bp,condPM[1,]+condPM[2,],labels=paste(round(condPM[2,],5),'%'))+ text(bp,condPM[1,],labels=paste(round(condPM[1,],5),'%'))
-  print(f)
-
+  cat('\n')
+  # Degree of Freedom
+  degf<-(length(colnames(condProb))-1) * (length(rownames(condProb))-1)
   # Remove the Total column
   x<-per[length(rownames(per)),]
   x[,length(colnames(x))]<-NULL
@@ -337,6 +332,19 @@ probTable<-function(){
   cli_alert_info('The Last Column will Always Equal True Because it is the Sum')
   cli_alert_info('Note:If there are more than or equal to 2 trues then all is true regardless of the display')
   print(eventTable)
+  # Barplot
+  barplotMenu<-c('True','False')
+  choice<-menu(barplotMenu,title='Bar Plot? ')
+  if(identical(choice,1L)){
+    condPM<-t(as.matrix(condProb))
+    bp<-barplot(condPM,ylab = 'Percentage',
+                ylim=c(0,max(condPM*3))
+                ,legend=c(rownames(condPM))
+                ,col=c("red","skyblue"),
+                args.legend=list(x='topright',bty="n",border=NA))
+    text(bp,condPM[2,]+condPM[1,],labels=paste(round(condPM[2,],5),'%'))
+    text(bp,condPM[2,],labels=paste(round(condPM[1,],5),'%'))
+  }
 }
 
 # Topic III
@@ -1372,6 +1380,7 @@ multiRegress<-function(){
 # Topic X
 menuListT10<-c(
   'Prob Table',
+  'Chi2 Test',
   'Back'
 );
 
@@ -1380,13 +1389,94 @@ topicX<-function(){
   choice<-menu(menuListT10,title='What do you need?')
   switch (choice,
           '1' = {probTable();topicX()},
-          '2' = {chi2Test();topicX()}
-          '3' = topicSelect(),
+          '2' = {chi2Test();topicX()},
+          '3' = topicSelect()
   )
 }
 
 chi2Test<-function(){
+  # Import the file
+  filex<-file.choose()
+  # Fix newline problem
+  cat("\n", file = filex, append = TRUE)
+  x<-read.csv(file=filex)
+  df<-data.frame(x)
+  # Row/col names
+  rownames(df)<-df[,1]
+  df[-c(1),-c(1)]
+  df<-df[,-1]
 
+  # Vertical Sum
+  verticalTotal<-numeric()
+  for (col in colnames(df)) {
+    verticalTotal<-c(verticalTotal,sum(df[col]))
+  }
+  # Update the df
+  df<-rbind(df,'Total'=verticalTotal)
+  # Horizontal Sum
+  horizontalTotal<-numeric()
+  for (rown in rownames(df)) {
+    horizontalTotal<-c(horizontalTotal,sum(df[rown,]))
+  }
+  # Update the df
+  df<-cbind(df,'Total'=horizontalTotal)
+  # Get the grand total
+  ro<-length(rownames(df))
+  co<-length(colnames(df))
+  grandSum<-df[ro,co]
+  # Calculate the percentage table
+  per<-data.frame(df/grandSum)
+  # The Table with the sum
+  cli_alert_info('Sum Table:')
+  print(df)
+  cat('\n')
+  # The percentage table
+  cli_alert_info('Percentage Table:')
+  print(per)
+  cat('\n')
+  # Conditional Probability
+  cli_alert_info('Conditional Probability:')
+  condProb<-df[!(rownames(df)=='Total'),]
+  condProb<-condProb/condProb[,'Total']
+  condProb<-condProb[,!(colnames(df)=='Total')]
+  print(condProb)
+  cat('\n')
+  # Degree of Freedom
+  degf<-(length(colnames(condProb))-1) * (length(rownames(condProb))-1)
+  # Remove the Total column
+  x<-per[length(rownames(per)),]
+  x[,length(colnames(x))]<-NULL
+  # Determin the event type
+  i<-0
+  filter<-character()
+  for (cols in x) {
+    i<-i+1
+    # filter<-c(filter,cols*per[,length(colnames(per))]==per[,i])
+    x<-cols*per[,length(colnames(per))]
+    y<-per[,i]
+    filter<-c(filter,as.double(x)==as.double(y))
+  }
+
+  roo<-length(rownames(per))
+  coo<-length(colnames(per))-1
+  eventTable<-matrix(filter,nrow=roo,ncol =coo)
+  cli_alert_info('Event Table: (True = Independent | False = Dependent)')
+  cli_alert_info('The Last Column will Always Equal True Because it is the Sum')
+  cli_alert_info('Note:If there are more than or equal to 2 trues then all is true regardless of the display')
+  print(eventTable)
+  # Barplot
+  barplotMenu<-c('True','False')
+  choice<-menu(barplotMenu,title='Bar Plot? ')
+  if(identical(choice,1L)){
+    condPM<-t(as.matrix(condProb))
+    bp<-barplot(condPM,ylab = 'Percentage',
+                ylim=c(0,max(condPM*3))
+                ,legend=c(rownames(condPM))
+                ,col=c("red","skyblue"),
+                args.legend=list(x='topright',bty="n",border=NA))
+    text(bp,condPM[2,]+condPM[1,],labels=paste(round(condPM[2,],5),'%'))
+    text(bp,condPM[2,],labels=paste(round(condPM[1,],5),'%'))
+  }
 }
 # Misc.:
 
@@ -1437,7 +1527,8 @@ topicSelect=function(){
             '6' = topicVI(),
             '7' = topicVII(),
             '8' = topicVIII(),
-            '9' = topicVIX()
+            '9' = topicVIX(),
+            '10' = topicX()
     )
   };
   mSelect(choice);
