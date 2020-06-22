@@ -257,7 +257,7 @@ menuListT2<-c(
 topicII<-function(){
   choice<-menu(menuListT2,title='What do you need?')
   switch (choice,
-          '1' = {probTable();probTable()},
+          '1' = {probTable();topicII()},
           '2' = topicSelect(),
   )
 }
@@ -267,7 +267,7 @@ probTable<-function(){
   filex<-file.choose()
   # Fix newline problem
   cat("\n", file = filex, append = TRUE)
-  x<-read.csv(file=filex,header = TRUE)
+  x<-read.csv(file=filex)
   df<-data.frame(x)
   # Row/col names
   rownames(df)<-df[,1]
@@ -275,34 +275,47 @@ probTable<-function(){
   df<-df[,-1]
 
   # Vertical Sum
-  verticalTotal<-integer()
-  for (coln in colnames(df)) {
-    verticalTotal<-c(verticalTotal,sum(df[coln]))
+  verticalTotal<-numeric()
+  for (col in colnames(df)) {
+    verticalTotal<-c(verticalTotal,sum(df[col]))
   }
   # Update the df
-  df<-rbind(df,verticalTotal)
+  df<-rbind(df,'Total'=verticalTotal)
   # Horizontal Sum
-  horizontalTotal<-integer()
+  horizontalTotal<-numeric()
   for (rown in rownames(df)) {
     horizontalTotal<-c(horizontalTotal,sum(df[rown,]))
   }
   # Update the df
-  df<-cbind(df,horizontalTotal)
+  df<-cbind(df,'Total'=horizontalTotal)
   # Get the grand total
   ro<-length(rownames(df))
   co<-length(colnames(df))
   grandSum<-df[ro,co]
   # Calculate the percentage table
   per<-data.frame(df/grandSum)
-  # Replace the column names
-  colnames(df)[co]<-'Total'
-  colnames(per)[co]<-'Total'
   # The Table with the sum
   print(df)
   cat('\n')
   # The percentage table
   print(per)
   cat('\n')
+  # Conditional Probability P(row|col)
+  cli_alert_info('Conditional Probability:')
+  condProb<-df[!(rownames(df)=='Total'),]
+  condProb<-condProb/condProb[,'Total']
+  condProb<-condProb[,!(colnames(df)=='Total')]
+  print(condProb)
+  # Barplot
+  condPM<-as.matrix(condProb)
+  bp<-barplot(condPM,ylab = 'Percentage',
+              ylim=c(0,max(condPM*3)),
+              ,legend=c(rownames(condPM))
+              ,col=c("red","skyblue"),
+              args.legend=list(x='topright',bty="n",border=NA))
+  f<-bp+text(bp,condPM[1,]+condPM[2,],labels=paste(round(condPM[2,],5),'%'))+ text(bp,condPM[1,],labels=paste(round(condPM[1,],5),'%'))
+  print(f)
+
   # Remove the Total column
   x<-per[length(rownames(per)),]
   x[,length(colnames(x))]<-NULL
@@ -320,9 +333,9 @@ probTable<-function(){
   roo<-length(rownames(per))
   coo<-length(colnames(per))-1
   eventTable<-matrix(filter,nrow=roo,ncol =coo)
-  cat('Event Table: (True = Independent | False = Dependent)',sep = '\n')
-  cat('The Last Column will Always Equal True Because it is the Sum',sep = '\n')
-  cat('Note:If there are more than or equal to 2 trues then all is true regardless of the display',sep = '\n')
+  cli_alert_info('Event Table: (True = Independent | False = Dependent)')
+  cli_alert_info('The Last Column will Always Equal True Because it is the Sum')
+  cli_alert_info('Note:If there are more than or equal to 2 trues then all is true regardless of the display')
   print(eventTable)
 }
 
@@ -1358,7 +1371,7 @@ multiRegress<-function(){
 
 # Topic X
 menuListT10<-c(
-  'Simple Regression',
+  'Prob Table',
   'Back'
 );
 
@@ -1366,11 +1379,15 @@ menuListT10<-c(
 topicX<-function(){
   choice<-menu(menuListT10,title='What do you need?')
   switch (choice,
-          '1' = {simpRegress();topicX()},
-          '2' = topicSelect(),
+          '1' = {probTable();topicX()},
+          '2' = {chi2Test();topicX()}
+          '3' = topicSelect(),
   )
 }
 
+chi2Test<-function(){
+
+}
 # Misc.:
 
 # Split input func
