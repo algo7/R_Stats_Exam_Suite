@@ -828,7 +828,7 @@ testSigKnown<-function(){
   # Step 4: Decision
   if(identical(testType,'Left Tail')){
     if(z_cal>z_crit){
-      cli_alert_success(paste('Accept H0:',H0))
+      cli_alert_success(paste('Failure to Reject H0:',H0))
       cli_alert_danger(paste('Reject H1:',H1))
     }else if(z_cal<z_crit){
       cli_alert_success(paste('Accept H1:',H1))
@@ -838,7 +838,7 @@ testSigKnown<-function(){
    }
   if(identical(testType,'Right Tail')){
     if(z_cal<z_crit){
-      cli_alert_success(paste('Accept H0:',H0))
+      cli_alert_success(paste('Failure to Reject H0:',H0))
       cli_alert_danger(paste('Reject H1:',H1))
     }else if(z_cal>z_crit){
      cli_alert_success(paste('Accept H1:',H1))
@@ -848,7 +848,7 @@ testSigKnown<-function(){
  }
   if(identical(testType,'Two Tail')){
    if(abs(z_cal)<z_crit){
-     cli_alert_success(paste('Accept H0:',H0))
+     cli_alert_success(paste('Failure to Reject H0:',H0))
      cli_alert_danger(paste('Reject H1:',H1))
    }else if(abs(z_cal)>z_crit){
      cli_alert_success(paste('Accept H1:',H1))
@@ -923,7 +923,7 @@ testSigUnKnown<-function(){
   # Step 4: Decision
   if(identical(testType,'Left Tail')){
     if(t_cal>t_crit){
-      cli_alert_success(paste('Accept H0:',H0))
+      cli_alert_success(paste('Failure to Reject H0:',H0))
       cli_alert_danger(paste('Reject H1:',H1))
     }else if(t_cal<t_crit){
       cli_alert_success(paste('Accept H1:',H1))
@@ -933,7 +933,7 @@ testSigUnKnown<-function(){
   }
   if(identical(testType,'Right Tail')){
     if(t_cal<t_crit){
-      cli_alert_success(paste('Accept H0:',H0))
+      cli_alert_success(paste('Failure to Reject H0:',H0))
       cli_alert_danger(paste('Reject H1:',H1))
     }else if(t_cal>t_crit){
       cli_alert_success(paste('Accept H1:',H1))
@@ -943,7 +943,7 @@ testSigUnKnown<-function(){
   }
   if(identical(testType,'Two Tail')){
     if(abs(t_cal)<t_crit){
-      cli_alert_success(paste('Accept H0:',H0))
+      cli_alert_success(paste('Failure to Reject H0:',H0))
       cli_alert_danger(paste('Reject H1:',H1))
     }else if(abs(t_cal)>t_crit){
       cli_alert_success(paste('Accept H1:',H1))
@@ -1022,7 +1022,7 @@ testProportion<-function(){
   # Step 4: Decision
   if(identical(testType,'Left Tail')){
     if(z_cal>z_crit){
-      cli_alert_success(paste('Accept H0:',H0))
+      cli_alert_success(paste('Failure to Reject H0:',H0))
       cli_alert_danger(paste('Reject H1:',H1))
     }else if(z_cal<z_crit){
       cli_alert_success(paste('Accept H1:',H1))
@@ -1032,7 +1032,7 @@ testProportion<-function(){
   }
   if(identical(testType,'Right Tail')){
     if(z_cal<z_crit){
-      cli_alert_success(paste('Accept H0:',H0))
+      cli_alert_success(paste('Failure to Reject H0:',H0))
       cli_alert_danger(paste('Reject H1:',H1))
     }else if(z_cal>z_crit){
       cli_alert_success(paste('Accept H1:',H1))
@@ -1042,7 +1042,7 @@ testProportion<-function(){
   }
   if(identical(testType,'Two Tail')){
     if(abs(z_cal)<z_crit){
-      cli_alert_success(paste('Accept H0:',H0))
+      cli_alert_success(paste('Failure to Reject H0:',H0))
       cli_alert_danger(paste('Reject H1:',H1))
     }else if(abs(z_cal)>z_crit){
       cli_alert_success(paste('Accept H1:',H1))
@@ -1131,7 +1131,7 @@ simpRegress<-function(){
     cli_alert_danger(paste('Reject H0',H0))
   }else{
     cli_alert_info('Hypothesis: ')
-    cli_alert_success(paste('Accept H0',H0))
+    cli_alert_success(paste('Failure to Reject H0',H0))
     cli_alert_danger(paste('Reject H1',H1))
   }
   cat('\n')
@@ -1351,7 +1351,7 @@ multiRegress<-function(){
       cli_alert_danger(paste('Reject H0',H0,'With:',rownames(p_vals[indepVar,,drop=FALSE])[i]))
     }else{
       cli_alert_info('Hypothesis: ')
-      cli_alert_success(paste('Accept H0',H0,'With:',rownames(p_vals[indepVar,,drop=FALSE])[i]))
+      cli_alert_success(paste('Failure to Reject H0',H0,'With:',rownames(p_vals[indepVar,,drop=FALSE])[i]))
       cli_alert_danger(paste('Reject H1',H1,'With:',rownames(p_vals[indepVar,,drop=FALSE])[i]))
     }
   }
@@ -1380,7 +1380,8 @@ multiRegress<-function(){
 # Topic X
 menuListT10<-c(
   'Prob Table',
-  'Chi2 Test',
+  'Chi2 Test (Test of Independence)',
+  'Chi2 Test (Goodness of Fit Test / Uinformity)',
   'Back'
 );
 
@@ -1389,23 +1390,23 @@ topicX<-function(){
   choice<-menu(menuListT10,title='What do you need?')
   switch (choice,
           '1' = {probTable();topicX()},
-          '2' = {chi2Test();topicX()},
-          '3' = topicSelect()
+          '2' = {chi2TestInd();topicX()},
+          '3' = {chi2TestGof();topicX()},
+          '4' = topicSelect()
   )
 }
 
-chi2Test<-function(){
+chi2TestInd<-function(){
   # Import the file
   filex<-file.choose()
-  H0<-'Are Two Independent Variable'
-  H1<-'Are TWo Dependent Vairbale'
+  H0<-'The Two Are Independent Variables'
+  H1<-'The Two Are Dependent Vairbales'
   # Fix newline problem
   cat("\n", file = filex, append = TRUE)
   x<-read.csv(file=filex)
   df<-data.frame(x)
   # Row/col names
   rownames(df)<-df[,1]
-  df[-c(1),-c(1)]
   df<-df[,-1]
   # Vertical Sum
   verticalTotal<-numeric()
@@ -1442,10 +1443,66 @@ chi2Test<-function(){
   condProb<-condProb[,!(colnames(df)=='Total')]
   print(condProb)
   cat('\n')
+  # # Separate the total row / col
+  # rowtt<-df['Total',]
+  # coltt<-df[,'Total']
+  # ttdf<-rbind(rowtt,coltt)
+  # ttdf<-ttdf[,!colnames(ttdf)=='Total']
+  # rownames(ttdf)<-NULL
+  # # The total val.
+  # ntt<-df['Total','Total']
+  # # Calculate the expected value
+  # leftCol<-c(ttdf[1,1]*ttdf[2,1]/ntt,ttdf[1,1]*ttdf[2,2]/ntt)
+  # rightCol<-c(ttdf[1,2]*ttdf[2,1]/ntt,ttdf[1,2]*ttdf[2,2]/ntt)
+  # expVals<-data.frame(cbind(leftCol,rightCol))
+  # # Swap the col / row names
+  # rownames(expVals)[1]<-rownames(df)[1]
+  # rownames(expVals)[2]<-rownames(df)[2]
+  # colnames(expVals)[1]<-colnames(df)[1]
+  # colnames(expVals)[2]<-colnames(df)[2]
+  # cli_alert_info('Expected Values:')
+  # print(expVals)
+  # Expected Values
+  cli_alert_info('Expected Values:')
+  chisq<-chisq.test(df)
+  expVals<-chisq$expected
+  print(expVals)
+  cat('\n')
+  # Chi2_cal
+  cli_alert_info('Chi2_cal Table:')
+  chi2_cal_tb<-(chisq$observed-chisq$expected)^2/chisq$expected
+  chi2_cal<-sum(chi2_cal_tb)
+  print(chi2_cal_tb)
+  cat('\n')
   # Degree of Freedom
-  cli_alert_info('Degree of Freedom:')
   degf<-(length(colnames(condProb))-1) * (length(rownames(condProb))-1)
-  print(degf)
+  # P-value
+  p_val<-pchisq(chisq$statistic,degf,lower.tail = F)
+  # significance lv / alpha
+  sl<-0.05
+  # critical value
+  chi2_crit<-qchisq(sl,degf,lower.tail = F)
+
+  cli_alert_info('Condition of Validity:')
+  condv<-5<expVals
+  condAlert<-character()
+  for (cond in condv) {
+    if(identical(cond,FALSE)){
+      condAlert<-c(condAlert,'No')
+    }
+  }
+  if(!identical(length(condAlert),0L)){
+    cli_alert_danger('Test not Valid')
+    topicX()
+  }
+  cli_alert_success('Test is Valid!')
+  cat('\n')
+  cli_alert_success('General Info: ')
+  generalInfo<-c(paste('Degree of Freedom:',degf),paste('P-Value:',p_val)
+                 ,paste('Critical Value (chi2_crit):',chi2_crit),paste('Chi2_cal (X^2):',chi2_cal)
+                 ,paste('Significance Lv. (Alpha):',sl))
+  print(generalInfo)
+  cat('\n')
   # Remove the Total column
   x<-per[length(rownames(per)),]
   x[,length(colnames(x))]<-NULL
@@ -1459,28 +1516,208 @@ chi2Test<-function(){
     y<-per[,i]
     filter<-c(filter,as.double(x)==as.double(y))
   }
-
+  # The event table
   roo<-length(rownames(per))
   coo<-length(colnames(per))-1
   eventTable<-matrix(filter,nrow=roo,ncol =coo)
   cli_alert_info('Event Table: (True = Independent | False = Dependent)')
   cli_alert_info('The Last Column will Always Equal True Because it is the Sum')
-  cli_alert_info('Note:If there are more than or equal to 2 trues then all is true regardless of the display')
+  cli_alert_info('Note:If there are more than or equal to')
+  cli_alert_info('2 trues then all is true regardless of the display')
+  cat('\n')
   print(eventTable)
+  cat('\n')
   # Barplot
-  barplotMenu<-c('True','False')
-  choice<-menu(barplotMenu,title='Bar Plot? ')
-  if(identical(choice,1L)){
-    condPM<-t(as.matrix(condProb))
-    bp<-barplot(condPM,ylab = 'Percentage',
-                ylim=c(0,max(condPM*3))
-                ,legend=c(rownames(condPM))
-                ,col=c("red","skyblue"),
-                args.legend=list(x='topright',bty="n",border=NA))
-    text(bp,condPM[2,]+condPM[1,],labels=paste(round(condPM[2,],5),'%'))
-    text(bp,condPM[2,],labels=paste(round(condPM[1,],5),'%'))
+  if(length(colnames(x)<3)){
+    barplotMenu<-c('True','False')
+    choice<-menu(barplotMenu,title='Bar Plot? ')
+    cat('\n')
+    if(identical(choice,1L)){
+      condPM<-t(as.matrix(condProb))
+      bp<-barplot(condPM,ylab = 'Percentage',
+                  ylim=c(0,max(condPM*3))
+                  ,legend=c(rownames(condPM))
+                  ,col=c("red","skyblue"),
+                  args.legend=list(x='topright',bty="n",border=NA))
+      text(bp,condPM[2,]+condPM[1,],labels=paste(round(condPM[2,],5),'%'))
+      text(bp,condPM[2,],labels=paste(round(condPM[1,],5),'%'))
+    }
+  }
+  # Decision
+  if(p_val>sl){
+    cli_alert_info('Hypothesis: ')
+    cli_alert_success(paste('Failure to Reject H0',H0))
+    cli_alert_danger(paste('Reject H1',H1))
+    cat('\n')
+  }else{
+    cli_alert_info('Hypothesis: ')
+    cli_alert_success(paste('Accept H1',H1))
+    cli_alert_danger(paste('Reject H0',H0))
+    cat('\n')
   }
 }
+
+chi2TestGof<-function(){
+  # Import the file
+  filex<-file.choose()
+  H0<-'The Data Follows A Uniform Distribution'
+  H1<-'The Data Does Not Follow a Unifrom Distribution'
+  # Fix newline problem
+  cat("\n", file = filex, append = TRUE)
+  x<-read.csv(file=filex)
+  df<-data.frame(x)
+  # Row/col names
+  rownames(df)<-df[,1]
+  df<-df[,-1]
+  # Vertical Sum
+  verticalTotal<-numeric()
+  for (col in colnames(df)) {
+    verticalTotal<-c(verticalTotal,sum(df[col]))
+  }
+  # Update the df
+  df<-rbind(df,'Total'=verticalTotal)
+  # Horizontal Sum
+  horizontalTotal<-numeric()
+  for (rown in rownames(df)) {
+    horizontalTotal<-c(horizontalTotal,sum(df[rown,]))
+  }
+  # Update the df
+  df<-cbind(df,'Total'=horizontalTotal)
+  # Get the grand total
+  ro<-length(rownames(df))
+  co<-length(colnames(df))
+  grandSum<-df[ro,co]
+  # Calculate the percentage table
+  per<-data.frame(df/grandSum)
+  # The Table with the sum
+  cli_alert_info('Sum Table:')
+  print(df)
+  cat('\n')
+  # The percentage table
+  cli_alert_info('Percentage Table:')
+  print(per)
+  cat('\n')
+  # Conditional Probability
+  cli_alert_info('Conditional Probability:')
+  condProb<-df[!(rownames(df)=='Total'),]
+  condProb<-condProb/condProb[,'Total']
+  condProb<-condProb[,!(colnames(df)=='Total')]
+  print(condProb)
+  cat('\n')
+  # # Separate the total row / col
+  # rowtt<-df['Total',]
+  # coltt<-df[,'Total']
+  # ttdf<-rbind(rowtt,coltt)
+  # ttdf<-ttdf[,!colnames(ttdf)=='Total']
+  # rownames(ttdf)<-NULL
+  # # The total val.
+  # ntt<-df['Total','Total']
+  # # Calculate the expected value
+  # leftCol<-c(ttdf[1,1]*ttdf[2,1]/ntt,ttdf[1,1]*ttdf[2,2]/ntt)
+  # rightCol<-c(ttdf[1,2]*ttdf[2,1]/ntt,ttdf[1,2]*ttdf[2,2]/ntt)
+  # expVals<-data.frame(cbind(leftCol,rightCol))
+  # # Swap the col / row names
+  # rownames(expVals)[1]<-rownames(df)[1]
+  # rownames(expVals)[2]<-rownames(df)[2]
+  # colnames(expVals)[1]<-colnames(df)[1]
+  # colnames(expVals)[2]<-colnames(df)[2]
+  # cli_alert_info('Expected Values:')
+  # print(expVals)
+  # Expected Values
+  cli_alert_info('Expected Values:')
+  chisq<-chisq.test(df)
+  expVals<-chisq$expected
+  print(expVals)
+  cat('\n')
+  # Chi2_cal
+  cli_alert_info('Chi2_cal Table:')
+  chi2_cal_tb<-(chisq$observed-chisq$expected)^2/chisq$expected
+  chi2_cal<-sum(chi2_cal_tb)
+  print(chi2_cal_tb)
+  cat('\n')
+  # Degree of Freedom
+  degf<-(length(colnames(condProb))-1) * (length(rownames(condProb))-1)
+  # P-value
+  p_val<-pchisq(chisq$statistic,degf,lower.tail = F)
+  # significance lv / alpha
+  sl<-0.05
+  # critical value
+  chi2_crit<-qchisq(sl,degf,lower.tail = F)
+
+  cli_alert_info('Condition of Validity:')
+  condv<-5<expVals
+  condAlert<-character()
+  for (cond in condv) {
+    if(identical(cond,FALSE)){
+      condAlert<-c(condAlert,'No')
+    }
+  }
+  if(!identical(length(condAlert),0L)){
+    cli_alert_danger('Test not Valid')
+    topicX()
+  }
+  cli_alert_success('Test is Valid!')
+  cat('\n')
+  cli_alert_success('General Info: ')
+  generalInfo<-c(paste('Degree of Freedom:',degf),paste('P-Value:',p_val)
+                 ,paste('Critical Value (chi2_crit):',chi2_crit),paste('Chi2_cal (X^2):',chi2_cal)
+                 ,paste('Significance Lv. (Alpha):',sl))
+  print(generalInfo)
+  cat('\n')
+  # Remove the Total column
+  x<-per[length(rownames(per)),]
+  x[,length(colnames(x))]<-NULL
+  # Determin the event type
+  i<-0
+  filter<-character()
+  for (cols in x) {
+    i<-i+1
+    # filter<-c(filter,cols*per[,length(colnames(per))]==per[,i])
+    x<-cols*per[,length(colnames(per))]
+    y<-per[,i]
+    filter<-c(filter,as.double(x)==as.double(y))
+  }
+  # The event table
+  roo<-length(rownames(per))
+  coo<-length(colnames(per))-1
+  eventTable<-matrix(filter,nrow=roo,ncol =coo)
+  cli_alert_info('Event Table: (True = Independent | False = Dependent)')
+  cli_alert_info('The Last Column will Always Equal True Because it is the Sum')
+  cli_alert_info('Note:If there are more than or equal to')
+  cli_alert_info('2 trues then all is true regardless of the display')
+  cat('\n')
+  print(eventTable)
+  cat('\n')
+  # Barplot
+  if(length(colnames(x)<3)){
+    barplotMenu<-c('True','False')
+    choice<-menu(barplotMenu,title='Bar Plot? ')
+    cat('\n')
+    if(identical(choice,1L)){
+      condPM<-t(as.matrix(condProb))
+      bp<-barplot(condPM,ylab = 'Percentage',
+                  ylim=c(0,max(condPM*3))
+                  ,legend=c(rownames(condPM))
+                  ,col=c("red","skyblue"),
+                  args.legend=list(x='topright',bty="n",border=NA))
+      text(bp,condPM[2,]+condPM[1,],labels=paste(round(condPM[2,],5),'%'))
+      text(bp,condPM[2,],labels=paste(round(condPM[1,],5),'%'))
+    }
+  }
+  # Decision
+  if(p_val>sl){
+    cli_alert_info('Hypothesis: ')
+    cli_alert_success(paste('Failure to Reject H0',H0))
+    cli_alert_danger(paste('Reject H1',H1))
+    cat('\n')
+  }else{
+    cli_alert_info('Hypothesis: ')
+    cli_alert_success(paste('Accept H1',H1))
+    cli_alert_danger(paste('Reject H0',H0))
+    cat('\n')
+  }
+}
+
 # Misc.:
 
 # Split input func
