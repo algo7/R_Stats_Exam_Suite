@@ -8,8 +8,8 @@ Terminal application for statistic exams.
 4. Run the code below in the R Console if it's your 1st time using the script.
 ```R
 install.packages(c('ggplot2','ggpubr','digest'
-                   ,'argparser','cli','utils','stats',
-                   'openintro','ggfortify','PEIP','corrplot','ggiraphExtra'))
+                   ,'argparser','cli','openintro','ggfortify',
+                   'PEIP','corrplot','ggiraphExtra'))
 ```
 
 # Steps (RStudio):
