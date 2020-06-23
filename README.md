@@ -5,6 +5,12 @@ Terminal application for statistic exams.
 1. [R](https://www.r-project.org/)
 2. [RStudio Desktop Edition](https://rstudio.com/products/rstudio/download/)
 3. This Repo. Clone it using Git or download the zip file directly.
+4. Run the code below in the R Console if it's your 1st time using the script.
+```R
+install.packages(c('ggplot2','ggpubr','digest'
+                   ,'argparser','cli','utils','stats',
+                   'openintro','ggfortify','PEIP','corrplot','ggiraphExtra'))
+```
 
 # Steps (RStudio):
 1. Open the `stats.R` file in RStudio.
