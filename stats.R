@@ -593,20 +593,28 @@ standardErrCategorical<-function(){
 menuListT6<-c(
   'File: Confidence Interval Known Sigma: Normal Distribution (Numerical)',
   'File: Confidence Interval Unknown Sigma: T Distribution (Numerical)',
-  'Confidence Interval Proportion (Categorical)',
+  'File: Confidence Interval Proportion (Categorical)',
   'User: Confidence Interval Known Sigma: Normal Distribution (Numerical)',
+  'User: Confidence Interval Unknown Sigma: T Distribution (Numerical)',
+  'User: Confidence Interval Proportion (Categorical)',
   'Back'
 );
 
 # Main Menu Selection Function
 topicVI<-function(){
+  c# Welcome Message
+  warnMsg<-'Column Name Required for Calculation'
+  cli::cat_boxx(warnMsg)
+
   choice<-menu(menuListT6,title='What do you need?')
   switch (choice,
           '1' = {confIntSigKnown();topicVI()},
           '2' = {confIntSigUnKnown();topicVI()},
           '3' = {confIntProportion();topicVI()},
           '4' = {confIntSigKnownUser();topicVI()},
-          '5' = topicSelect(),
+          '5' = {confIntSigUnKnownUser();topicVI()},
+          '6' = {confIntProportionUser();topicVI()},
+          '7' = topicSelect(),
   )
 }
 
@@ -752,7 +760,7 @@ confIntSigKnownUser<-function(){
   sig<-toInt(readline(prompt='Enter the Sigma (Given Stdev): '))
   sampleSize<-toInt(readline(prompt='Enter the Sample Size: '))
   # Population Average
-  avg<-toInt(readline(prompt='Enter the Population Average '))
+  avg<-toInt(readline(prompt='Enter the Population Average: '))
   # The confidence level
   cl<-toInt(readline(prompt='Enter the Confidence Level (usually 95%): '))
   sl<-1-cl
@@ -778,6 +786,89 @@ confIntSigKnownUser<-function(){
             paste('Standard Error:',stderr),paste('Error Margin:',em),
             paste('Precision:',pres),paste('Lower Limit:',ll),
             paste('Upper Limit:',ul))
+  print(result)
+  cat('\n')
+  # Warning abt analysis
+  cli_alert_warning('The analysis should at least include the point of estimate (avg),')
+  cli_alert_warning('the margin of error, the confidence level, or the lower&upper limit')
+  cat('\n')
+}
+
+# Confidence Level with Unknown Sigma (using stdev from the sample) | User Input
+confIntSigUnKnownUser<-function(){
+  # Calculate the sample size and the average | calculate the sigma
+  sig<-toInt(readline(prompt='Enter the Sample Standard Deviation: '))
+  sampleSize<-toInt(readline(prompt='Enter the Sample Size: '))
+  avg<-toInt(readline(prompt='Enter the Sample Average: '))
+  # The confidence level
+  cl<-toInt(readline(prompt='Enter the Confidence Level (usually 95%): '))
+  sl<-1-cl
+  # The degree of freedom
+  degf<-sampleSize-1
+  # The t value (the critical value)
+  t<-tinv(cl+sl/2,degf)
+  # The standard error
+  stderr<-sig/sqrt(sampleSize)
+  # Error margin
+  em<-stderr*t
+  # Precision
+  pres<-em/avg
+  # Lower Limit
+  ll<-avg-em
+  # Upper Limit
+  ul<-avg+em
+  #The result
+  cat('\n')
+  cli_alert_success('The Results:')
+  cat('\n')
+  result<-c(paste('Sigma:',sig),paste('Sample Size:',sampleSize)
+            ,paste('Avg:',avg),paste('Confidence Level:',cl)
+            ,paste('Significance Level:',sl),paste('Degree of Freedom:',degf)
+            ,paste('T-value:',t),paste('Standard Error:',stderr),paste('Error Margin:',em),
+            paste('Precision:',pres),paste('Lower Limit:',ll),paste('Upper Limit:',ul))
+  print(result)
+  cat('\n')
+  # Warning abt analysis
+  cli_alert_warning('The analysis should at least include the point of estimate (avg),')
+  cli_alert_warning('the margin of error, the confidence level, or the lower&upper limit')
+  cat('\n')
+}
+
+# Confidence Level with Proportion
+confIntProportionUser<-function(){
+
+  # Get the sample size
+  sampleSize<-pp<-toInt(readline(prompt='Enter the Sample Size: '))
+  # Get the proportion
+  pp<-toInt(readline(prompt='Enter the Proportion: '))
+  # The average p_bar
+  avg<- pp/sampleSize
+  # 1- p_bar
+  navg<-1-avg
+  # The confidence level
+  cl<-toInt(readline(prompt='Enter the Confidence Level (usually 95%): '))
+  sl<-1-cl
+  # The z value (the critical value)
+  z<-qnorm(cl+sl/2)
+  # The standard error
+  stderr<-sqrt(avg*navg/sampleSize)
+  # Error margin
+  em<-stderr*z
+  # Precision remains in percentage as all are in percentage already
+  pres<-em
+  # Lower Limit
+  ll<-avg-em
+  # Upper Limit
+  ul<-avg+em
+  #The result
+  cat('\n')
+  cli_alert_success('The Results:')
+  cat('\n')
+  result<-c(paste('Sample Size:',sampleSize),paste('Proportion:',pp)
+            ,paste('Avg:',avg),paste('1-Avg:',navg),paste('Confidence Level:',cl)
+            ,paste('Significance Level:',sl),paste('Z-value:',z)
+            ,paste('Standard Error:',stderr),paste('Error Margin:',em),
+            paste('Precision:',pres),paste('Lower Limit:',ll),paste('Upper Limit:',ul))
   print(result)
   cat('\n')
   # Warning abt analysis
