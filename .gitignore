@@ -27,3 +27,6 @@ vignettes/*.pdf
 # R Environment Variables
 .Renviron
 .DS_Store
+Book23.xlsx
+Book1.xlsx
+Book23.csv

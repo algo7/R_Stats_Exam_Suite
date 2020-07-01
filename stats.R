@@ -11,7 +11,7 @@ library(openintro);
 library(ggfortify);
 library(PEIP);
 library(corrplot);
-library(ggiraphExtra)
+library(ggiraphExtra);
 
 
 
@@ -303,12 +303,12 @@ probTable<-function(){
   print(per)
   cat('\n')
   # Conditional Probability
-  cli_alert_info('Conditional Probability:')
-  condProb<-df[!(rownames(df)=='Total'),]
-  condProb<-condProb/condProb[,'Total']
-  condProb<-condProb[,!(colnames(df)=='Total')]
-  print(condProb)
-  cat('\n')
+  # cli_alert_info('Conditional Probability:')
+  # condProb<-condProb[,!(colnames(per)=='Total')]
+  # condProb<-per[!(rownames(per)=='Total'),]
+  # condProb<-condProb/per[,'Total']
+  # print(condProb)
+  # cat('\n')
   # Degree of Freedom
   degf<-(length(colnames(condProb))-1) * (length(rownames(condProb))-1)
   # Remove the Total column
@@ -591,9 +591,10 @@ standardErrCategorical<-function(){
 
 # Topic VI
 menuListT6<-c(
-  'Confidence Interval Known Sigma: Normal Distribution (Numerical)',
-  'Confidence Interval Unknown Sigma: T Distribution (Numerical)',
+  'File: Confidence Interval Known Sigma: Normal Distribution (Numerical)',
+  'File: Confidence Interval Unknown Sigma: T Distribution (Numerical)',
   'Confidence Interval Proportion (Categorical)',
+  'User: Confidence Interval Known Sigma: Normal Distribution (Numerical)',
   'Back'
 );
 
@@ -604,7 +605,8 @@ topicVI<-function(){
           '1' = {confIntSigKnown();topicVI()},
           '2' = {confIntSigUnKnown();topicVI()},
           '3' = {confIntProportion();topicVI()},
-          '4' = topicSelect(),
+          '4' = {confIntSigKnownUser();topicVI()},
+          '5' = topicSelect(),
   )
 }
 
@@ -744,6 +746,45 @@ confIntProportion<-function(){
   cat('\n')
 }
 
+# Confidence Level with Known Sigma (stdev/sigma giving) | User Input
+confIntSigKnownUser<-function(){
+  # Calculate the sample size and the average | get the sigma
+  sig<-toInt(readline(prompt='Enter the Sigma (Given Stdev): '))
+  sampleSize<-toInt(readline(prompt='Enter the Sample Size: '))
+  # Population Average
+  avg<-toInt(readline(prompt='Enter the Population Average '))
+  # The confidence level
+  cl<-toInt(readline(prompt='Enter the Confidence Level (usually 95%): '))
+  sl<-1-cl
+  # The z value (the critical value)
+  z<-qnorm(cl+sl/2)
+  # The standard error
+  stderr<-sig/sqrt(sampleSize)
+  # Error margin
+  em<-stderr*z
+  # Precision
+  pres<-em/avg
+  # Lower Limit
+  ll<-avg-em
+  # Upper Limit
+  ul<-avg+em
+  #The result
+  cat('\n')
+  cli_alert_success('The Results:')
+  cat('\n')
+  result<-c(paste('Sigma:',sig),paste('Sample Size:',sampleSize)
+            ,paste('Avg:',avg),paste('Confidence Level:',cl)
+            ,paste('Significance Level:',sl),paste('Z-value:',z),
+            paste('Standard Error:',stderr),paste('Error Margin:',em),
+            paste('Precision:',pres),paste('Lower Limit:',ll),
+            paste('Upper Limit:',ul))
+  print(result)
+  cat('\n')
+  # Warning abt analysis
+  cli_alert_warning('The analysis should at least include the point of estimate (avg),')
+  cli_alert_warning('the margin of error, the confidence level, or the lower&upper limit')
+  cat('\n')
+}
 
 # Topic VII
 menuListT7<-c(
@@ -1437,12 +1478,12 @@ chi2TestInd<-function(){
   print(per)
   cat('\n')
   # Conditional Probability
-  cli_alert_info('Conditional Probability:')
-  condProb<-df[!(rownames(df)=='Total'),]
-  condProb<-condProb/condProb[,'Total']
-  condProb<-condProb[,!(colnames(df)=='Total')]
-  print(condProb)
-  cat('\n')
+  # cli_alert_info('Conditional Probability:')
+  # condProb<-df[!(rownames(df)=='Total'),]
+  # condProb<-condProb/condProb[,'Total']
+  # condProb<-condProb[,!(colnames(df)=='Total')]
+  # print(condProb)
+  # cat('\n')
   # # Separate the total row / col
   # rowtt<-df['Total',]
   # coltt<-df[,'Total']
@@ -1470,7 +1511,7 @@ chi2TestInd<-function(){
   cat('\n')
   # Condition of Validity
   cli_alert_info('Condition of Validity:')
-  condv<-5<expVals
+  condv<-5 <= expVals
   condAlert<-character()
   for (cond in condv) {
     if(identical(cond,FALSE)){
@@ -1608,7 +1649,7 @@ chi2TestGof<-function(){
   cat('\n')
   # Condition of Validity
   cli_alert_info('Condition of Validity:')
-  condv<-5<expVals
+  condv<-5<= expVals
   condAlert<-character()
   for (cond in condv) {
     if(identical(cond,FALSE)){
