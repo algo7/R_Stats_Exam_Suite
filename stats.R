@@ -709,6 +709,8 @@ confIntSigUnKnown<-function(){
 
 # Confidence Level with Proportion
 confIntProportion<-function(){
+  cli_alert_warning('Remember T Distribution Does Not Apply to')
+  cli_alert_warning('Confidence Interval with Proportion ')
   filex<-file.choose()
   # Fix newline problem
   cat("\n", file = filex, append = TRUE)
@@ -836,7 +838,8 @@ confIntSigUnKnownUser<-function(){
 
 # Confidence Level with Proportion
 confIntProportionUser<-function(){
-
+  cli_alert_warning('Remember T Distribution Does Not Apply to')
+  cli_alert_warning('Confidence Interval with Proportion ')
   # Get the sample size
   sampleSize<-pp<-toInt(readline(prompt='Enter the Sample Size: '))
   # Get the proportion
