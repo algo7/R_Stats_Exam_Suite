@@ -1050,7 +1050,7 @@ testSigUnKnown<-function(){
 
   # General Info
   ginfo<-c(paste('Sample Size:',sampleSize),paste('Average:',sampleAvg)
-           ,paste('Population Stdev:',popStdev),paste('Test Value:',testVal),
+           ,paste('Test Value:',testVal),
            paste('H0:',H0),paste('H1:',H1),paste('Test Type:',testType)
            ,paste('Standard Error:',stderr),paste('t_cal:',t_cal),
            paste('p_val:',p_val),paste('Significance Level:',sl),paste('t_crit:',t_crit))
