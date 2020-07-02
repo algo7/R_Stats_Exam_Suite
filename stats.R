@@ -1605,7 +1605,7 @@ chi2TestInd<-function(){
   cat('\n')
   # Condition of Validity
   cli_alert_info('Condition of Validity:')
-  condv<-5 <= expVals
+  condv<-1 <= expVals
   condAlert<-character()
   for (cond in condv) {
     if(identical(cond,FALSE)){
@@ -1743,7 +1743,7 @@ chi2TestGof<-function(){
   cat('\n')
   # Condition of Validity
   cli_alert_info('Condition of Validity:')
-  condv<-5<= expVals
+  condv<-1<= expVals
   condAlert<-character()
   for (cond in condv) {
     if(identical(cond,FALSE)){
