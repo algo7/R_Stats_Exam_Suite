@@ -943,7 +943,7 @@ testSigKnown<-function(){
     p_val<-pnorm(z_cal)
   }
   # The Significance Level (Alpha)
-  sl<-toInt(readline(prompt='Enter the Significance Level: '))
+  sl<-toInt(readline(prompt='Enter the Significance Level (alpha): '))
   # The critical value
   if(identical(testType,'Two Tail')){
     z_crit<-qnorm(1-sl/2)
@@ -1038,7 +1038,7 @@ testSigUnKnown<-function(){
     p_val<-pt(t_cal,degf)
   }
   # The Significance Level (Alpha)
-  sl<-toInt(readline(prompt='Enter the Significance Level: '))
+  sl<-toInt(readline(prompt='Enter the Significance Level (alpha): '))
   # The critical value
   if(identical(testType,'Two Tail')){
     t_crit<-pt(1-sl/2,degf)
@@ -1138,7 +1138,7 @@ testProportion<-function(){
     p_val<-pnorm(z_cal)
   }
   # The Significance Level (Alpha)
-  sl<-toInt(readline(prompt='Enter the Significance Level: '))
+  sl<-toInt(readline(prompt='Enter the Significance Level (alpha): '))
   # The critical value
   if(identical(testType,'Two Tail')){
     z_crit<-qnorm(1-sl/2)
