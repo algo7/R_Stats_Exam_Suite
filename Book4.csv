@@ -1,6 +1,5 @@
-﻿,Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday
-day,66,50,53,47,55,69,80
-
-
-
+﻿Type of Ticket,Domestic,International
+First Class,29,22
+Business Class,95,121
+Economy Class,518,135
 

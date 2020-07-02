@@ -1122,13 +1122,13 @@ testProportion<-function(){
   if(identical(samp,'y')){
     avg<- sampleProp/sampleSize
     navg<-1-avg
-    stderr<-(avg*navg)/sampleSize
+    stderr<-sqrt(avg*navg/sampleSize)
   }else if(identical(samp,'n')){
     stderr<-sqrt((testVal*(1-testVal)/sampleSize))
   }
 
   # The test statistic (standardized)
-  z_cal<-(sampleProp-testVal)/stderr
+  z_cal<-((sampleProp/sampleSize)-testVal)/stderr
   # Cumulative probability of z_cal
   if(identical(testType,'Two Tail')){
     p_val<-pnorm(z_cal)*2
