@@ -304,8 +304,8 @@ probTable<-function(){
   cat('\n')
   # Conditional Probability
   # cli_alert_info('Conditional Probability:')
-  # condProb<-condProb[,!(colnames(per)=='Total')]
-  # condProb<-per[!(rownames(per)=='Total'),]
+  condProb<-condProb[,!(colnames(per)=='Total')]
+  condProb<-per[!(rownames(per)=='Total'),]
   # condProb<-condProb/per[,'Total']
   # print(condProb)
   # cat('\n')
@@ -1090,8 +1090,8 @@ testSigUnKnown<-function(){
 testProportion<-function(){
   # Step 0: Compute the sample size
   sampleSize<-toInt(readline(prompt='Enter the Sample Size: '))
-  sampleProp<-toInt(readline(prompt='Enter the Sample Proportion %: '))
-  testVal<-toInt(readline(prompt='Enter the Value to be Tested %: '))
+  sampleProp<-toInt(readline(prompt='Enter the Sample Proportion: '))
+  testVal<-toInt(readline(prompt='Enter the Value to be Tested: '))
   # Step 1: Formulate the hypithesis
   H1<-readline(prompt='H1-Enter Your Hypothesis: ')
   H0<-readline(prompt='H0-Enter the Original Hypothesis: ')
@@ -1573,9 +1573,9 @@ chi2TestInd<-function(){
   cat('\n')
   # Conditional Probability
   # cli_alert_info('Conditional Probability:')
-  # condProb<-df[!(rownames(df)=='Total'),]
+  condProb<-df[!(rownames(df)=='Total'),]
+  condProb<-condProb[,!(colnames(df)=='Total')]
   # condProb<-condProb/condProb[,'Total']
-  # condProb<-condProb[,!(colnames(df)=='Total')]
   # print(condProb)
   # cat('\n')
   # # Separate the total row / col
