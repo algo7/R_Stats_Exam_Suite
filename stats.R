@@ -943,7 +943,7 @@ testSigKnown<-function(){
     p_val<-pnorm(z_cal)
   }
   # The Significance Level (Alpha)
-  sl<-toInt(readline(prompt='Enter the Significance Level (alpha): '))
+  sl<-toInt(readline(prompt='Enter the Significance Level / Alpha (usually 5%): '))
   # The critical value
   if(identical(testType,'Two Tail')){
     z_crit<-qnorm(1-sl/2)
@@ -1038,7 +1038,7 @@ testSigUnKnown<-function(){
     p_val<-pt(t_cal,degf)
   }
   # The Significance Level (Alpha)
-  sl<-toInt(readline(prompt='Enter the Significance Level (alpha): '))
+  sl<-toInt(readline(prompt='Enter the Significance Level / Alpha (usually 5%): '))
   # The critical value
   if(identical(testType,'Two Tail')){
     t_crit<-pt(1-sl/2,degf)
@@ -1138,7 +1138,7 @@ testProportion<-function(){
     p_val<-pnorm(z_cal)
   }
   # The Significance Level (Alpha)
-  sl<-toInt(readline(prompt='Enter the Significance Level (alpha): '))
+  sl<-toInt(readline(prompt='Enter the Significance Level / Alpha (usually 5%): '))
   # The critical value
   if(identical(testType,'Two Tail')){
     z_crit<-qnorm(1-sl/2)
@@ -1532,6 +1532,7 @@ topicX<-function(){
 }
 
 chi2TestInd<-function(){
+  cli_alert_danger('Need Both Column and Row Names')
   # Import the file
   filex<-file.choose()
   H0<-'The Two Are Independent Variables'
@@ -1629,7 +1630,7 @@ chi2TestInd<-function(){
   # P-value
   p_val<-pchisq(chisq$statistic,degf,lower.tail = F)
   # significance lv / alpha
-  sl<-0.05
+  sl<-toInt(readline(prompt='Enter the Significance Level / Alpha (usually 5%): '))
   # critical value
   chi2_crit<-qchisq(sl,degf,lower.tail = F)
   # General Info.
@@ -1694,6 +1695,7 @@ chi2TestInd<-function(){
 }
 
 chi2TestGof<-function(){
+  cli_alert_danger('Need Both Column and Row Names')
   # Import the file
   filex<-file.choose()
   H0<-'The Data Follows A Uniform Distribution'
@@ -1767,7 +1769,7 @@ chi2TestGof<-function(){
   # P-value
   p_val<-pchisq(chisq$statistic,degf,lower.tail = F)
   # significance lv / alpha
-  sl<-0.05
+  sl<-toInt(readline(prompt='Enter the Significance Level / Alpha (usually 5%): '))
   # critical value
   chi2_crit<-qchisq(sl,degf,lower.tail = F)
   cli_alert_success('General Info: ')
