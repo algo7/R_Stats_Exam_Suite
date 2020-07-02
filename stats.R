@@ -1090,7 +1090,7 @@ testSigUnKnown<-function(){
 testProportion<-function(){
   # Step 0: Compute the sample size
   sampleSize<-toInt(readline(prompt='Enter the Sample Size: '))
-  sampleProp<-toInt(readline(prompt='Enter the Sample Proportion: '))
+  sampleProp<-toInt(readline(prompt='Enter the Sample Proportion (not %): '))
   testVal<-toInt(readline(prompt='Enter the Value to be Tested: '))
   # Step 1: Formulate the hypithesis
   H1<-readline(prompt='H1-Enter Your Hypothesis: ')
@@ -1118,7 +1118,7 @@ testProportion<-function(){
   }
   testType<-testType()
   # Step 3: Computation
-  samp<-readline(prompt='Use Sample Proportion [y/n]?: ')
+  samp<-readline(prompt='Use Sample Proportion [y/n (infer from test val.)]?: ')
   if(identical(samp,'y')){
     avg<- sampleProp/sampleSize
     navg<-1-avg
