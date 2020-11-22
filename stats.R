@@ -23,7 +23,7 @@ welcomeMsg<-'Hi Welcome to the Stats Terminal by Aviv'
 cli::cat_boxx(welcomeMsg)
 
 # Topic 1
-# Main Menu List
+# Main Menu List /
 menuListT1<-c(
   'Indicators (Location: Avg.,Median,Mode | Variability: Stdev,IQR,Range,CV)',
   'Relationship',
