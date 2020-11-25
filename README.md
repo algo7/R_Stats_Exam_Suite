@@ -25,9 +25,9 @@ Terminal application for university statistic exams.
 * In a real estate agency, the manager wants to analyze the price of houses depending on the age of the house, the size of the land lot and the size of living space.
 ### MLR Summary Function:
 
-#### It provides you with a list of frequency tables regarding to each variables.
+### It provides you with a list of frequency tables regarding to each variables.
 
-#### You have the following options for your frequency tables:
+### You have the following options for your frequency tables:
 1. Right Open
 2. Right Closed
 3. Right Open (UpperLimitOnly)
@@ -36,15 +36,16 @@ Terminal application for university statistic exams.
 ![The summary function](https://raw.githubusercontent.com/algo7/R_Stats_Exam_Suite/master/screenshots/sum_func.jpeg)
 
 
-#### It also generates graph for each frequency table and the relative frequency version
+### It also generates graph for each frequency table and the relative frequency version
 ![Graphs](https://raw.githubusercontent.com/algo7/R_Stats_Exam_Suite/master/screenshots/freqt_merged.jpg)
 
-#### graph for the correlation matrix is also provided.
+### A graph for the correlation matrix is also provided.
 ![Correlation matrix](https://raw.githubusercontent.com/algo7/R_Stats_Exam_Suite/master/screenshots/correlation_matrix.png)
 
 ### MLR Results:
 The table is truncated as it is too long
 ![MLR Results](https://raw.githubusercontent.com/algo7/R_Stats_Exam_Suite/master/screenshots/MLR.jpg)
+You can enter the values in CSV directly to get your prediction result.
 
 
 
