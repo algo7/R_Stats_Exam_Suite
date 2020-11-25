@@ -15,8 +15,13 @@ Terminal application for university statistic exams.
 10. Chi2 Test
 
 # Example Screenshot:
-1. Main Menu and Selection Options
+1. Main Menu and Selection Options:
 ![Example](https://raw.githubusercontent.com/algo7/R_Stats_Exam_Suite/master/screenshots/example.png)
+
+2. Multiple linear regression (MLR) Example:
+* The sample files can be found in th `samples` folder
+    1. `Multiple_Regression.xlsx` (the excercise file)
+    2. `sanitized_data.csv` (the file with processed data)
 
 
 
