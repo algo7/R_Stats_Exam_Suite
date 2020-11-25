@@ -1,5 +1,8 @@
 # R_Stats_Exam_Suite
-Terminal application for statistic exams.
+Terminal application for univeristy statistic exams.
+
+# Example Screenshot:
+![Example](https://raw.githubusercontent.com/algo7/R_Stats_Exam_Suite/master/example.pnge)
 
 # Requirements:
 1. [R](https://www.r-project.org/)
