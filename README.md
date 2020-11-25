@@ -15,7 +15,10 @@ Terminal application for university statistic exams.
 10. Chi2 Test
 
 # Example Screenshot:
+1. Main Menu and Selection Options
 ![Example](https://raw.githubusercontent.com/algo7/R_Stats_Exam_Suite/master/screenshots/example.png)
+
+
 
 # Requirements:
 1. [R](https://www.r-project.org/)
