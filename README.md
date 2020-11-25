@@ -2,7 +2,7 @@
 Terminal application for university statistic exams.
 
 # Current Topics Covered :
-**there are typos in the actual menu in the application**
+**There are many typos in the actual menu in the application**
  1. Descriptive Statistic
  2. Probability
  3. Discrete Variables
