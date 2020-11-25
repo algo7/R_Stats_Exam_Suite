@@ -24,9 +24,16 @@ Terminal application for university statistic exams.
     2. `sanitized_data.csv` (the file with processed data)
 * In a real estate agency, the manager wants to analyze the price of houses depending on the age of the house, the size of the land lot and the size of living space.
 * MLR Summary Function:
+**It provides you with a list of frequency tables regarding to each variables.**
+**You have the following options for your frequency tables:**
+1. Right Open
+2. Right Closed
+3. Right Open (UpperLimitOnly)
+4. Right Closed (UpperLimitOnly)
+5. Back
 
 * MLR Results:
-* The table is truncated as it is too long
+The table is truncated as it is too long
 ![MLR Results](https://raw.githubusercontent.com/algo7/R_Stats_Exam_Suite/master/screenshots/MLR.jpg)
 
 
