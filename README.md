@@ -1,6 +1,18 @@
 # R_Stats_Exam_Suite
 Terminal application for university statistic exams.
 
+# Current Topics Covered:
+ 1: Descriptive Statistic
+ 2: Probability
+ 3: Discrete Variables
+ 4: Continuous Variables
+ 5: Sampling Distributions
+ 6: Confidence Interval
+ 7: Hypothesis Testing
+ 8: Simple Linear Regression
+ 9: Multiple Linear Regression
+10: Chi2 Test
+
 # Example Screenshot:
 ![Example](https://raw.githubusercontent.com/algo7/R_Stats_Exam_Suite/master/screenshots/example.png)
 
