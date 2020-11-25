@@ -1,8 +1,8 @@
 # R_Stats_Exam_Suite
-Terminal application for univeristy statistic exams.
+Terminal application for university statistic exams.
 
 # Example Screenshot:
-![Example](https://raw.githubusercontent.com/algo7/R_Stats_Exam_Suite/master/example.png)
+![Example](https://raw.githubusercontent.com/algo7/R_Stats_Exam_Suite/master/screenshots/example.png)
 
 # Requirements:
 1. [R](https://www.r-project.org/)
@@ -15,13 +15,13 @@ install.packages(c('ggplot2','ggpubr','digest'
                    'PEIP','corrplot','ggiraphExtra'))
 ```
 
-# Steps (RStudio):
+# Steps (RStudio)[Recommended]:
 1. Open the `stats.R` file in RStudio.
 2. Open the Console at the bottom.
 3. Type in `source('stats.R')`.
 
 
-# Steps (R from the Terminal):
+# Steps (R from the Terminal)[Some graphs might not be available]:
 1. Open your terminal
 2. Navigate to the directory where the files are.
 3. Open R in the terminal by typing in `R`
