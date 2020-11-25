@@ -1,7 +1,8 @@
 # R_Stats_Exam_Suite
 Terminal application for university statistic exams.
 
-# Current Topics Covered (there are typos in the actual menu in the application):
+# Current Topics Covered :
+**there are typos in the actual menu in the application**
  1. Descriptive Statistic
  2. Probability
  3. Discrete Variables
