@@ -20,12 +20,12 @@ Terminal application for university statistic exams.
 
 ##  Multiple linear regression (MLR) Example:
 * The sample files can be found in th `samples` folder
-    1. `Multiple_Regression.xlsx` (the excercise file)
+    1. `Multiple_Regression.xlsx` (the exercise file)
     2. `sanitized_data.csv` (the file with processed data)
 * In a real estate agency, the manager wants to analyze the price of houses depending on the age of the house, the size of the land lot and the size of living space.
 ### MLR Summary Function:
 
-### It provides you with a list of frequency tables regarding to each variables.
+### It provides you with a list of frequency tables regarding each variables.
 
 ### You have the following options for your frequency tables:
 1. Right Open
