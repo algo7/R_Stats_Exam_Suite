@@ -304,7 +304,7 @@ probTable<-function(){
   cat('\n')
   # Conditional Probability
   # cli_alert_info('Conditional Probability:')
-  condProb<-condProb[,!(colnames(per)=='Total')]
+  condProb<-df[,!(colnames(per)=='Total')]
   condProb<-per[!(rownames(per)=='Total'),]
   # condProb<-condProb/per[,'Total']
   # print(condProb)
