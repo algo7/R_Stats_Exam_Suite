@@ -265,8 +265,6 @@ topicII<-function(){
 probTable<-function(){
   # Import the file
   filex<-file.choose()
-  # Fix newline problem
-  cat("\n", file = filex, append = TRUE)
   x<-read.csv(file=filex)
   df<-data.frame(x)
   # Row/col names
@@ -365,8 +363,6 @@ topicIII<-function(){
 discreteProbDistro<-function(){
   # Import the file
   filex<-file.choose()
-  # Fix newline problem
-  cat("\n", file = filex, append = TRUE)
   x<-read.csv(file=filex,header = TRUE)
   df<-data.frame(x)
   # Get the total
@@ -621,8 +617,7 @@ topicVI<-function(){
 # Confidence Level with Known Sigma (stdev/sigma giving)
 confIntSigKnown<-function(){
   filex<-file.choose()
-  # Fix newline problem
-  cat("\n", file = filex, append = TRUE)
+
   x<-read.csv(file=filex,header = TRUE)
   df<-data.frame(x)
   # Calculate the sample size and the average | get the sigma
@@ -665,8 +660,6 @@ confIntSigKnown<-function(){
 # Confidence Level with Unknown Sigma (using stdev from the sample)
 confIntSigUnKnown<-function(){
   filex<-file.choose()
-  # Fix newline problem
-  cat("\n", file = filex, append = TRUE)
   x<-read.csv(file=filex,header = TRUE)
   df<-data.frame(x)
   # Calculate the sample size and the average | calculate the sigma
@@ -712,8 +705,6 @@ confIntProportion<-function(){
   cli_alert_warning('Remember T Distribution Does Not Apply to')
   cli_alert_warning('Confidence Interval with Proportion ')
   filex<-file.choose()
-  # Fix newline problem
-  cat("\n", file = filex, append = TRUE)
   x<-read.csv(file=filex,header = TRUE)
   df<-data.frame(x)
   # Calculate the sample size
@@ -1537,8 +1528,6 @@ chi2TestInd<-function(){
   filex<-file.choose()
   H0<-'The Two Are Independent Variables'
   H1<-'The Two Are Dependent Vairbales'
-  # Fix newline problem
-  cat("\n", file = filex, append = TRUE)
   x<-read.csv(file=filex)
   df<-data.frame(x)
   # Row/col names
@@ -1700,8 +1689,7 @@ chi2TestGof<-function(){
   filex<-file.choose()
   H0<-'The Data Follows A Uniform Distribution'
   H1<-'The Data Does Not Follow a Unifrom Distribution'
-  # Fix newline problem
-  cat("\n", file = filex, append = TRUE)
+
   x<-read.csv(file=filex)
   df<-data.frame(x)
   # Row/col names
